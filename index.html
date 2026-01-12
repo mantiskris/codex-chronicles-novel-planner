@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Codex Chronicle - Intelligent Novel Planning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Source+Serif+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --parchment: #f8f3e6;
+            --ink: #2c1810;
+            --gold: #d4af37;
+            --sienna: #8b4513;
+            --slate: #2f4f4f;
+            --crimson: #9d0000;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Source Serif Pro', serif;
+            background-color: var(--parchment);
+            color: var(--ink);
+            line-height: 1.8;
+            background-image: radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            padding: 40px 0;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 50px;
+        }
+        
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            color: var(--sienna);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .logo-icon { font-size: 3rem; color: var(--gold); }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--slate);
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin: 80px 0;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+        
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: var(--sienna);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gold);
+            text-align: center;
+        }
+        
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .widget-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .widget-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .widget-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--gold), var(--crimson));
+        }
+        
+        .widget-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .widget-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--sienna);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .widget-features {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .widget-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(139, 69, 19, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .demo-interface {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin: 50px 0;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, var(--sienna), var(--slate));
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .demo-body {
+            padding: 30px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .message.ai {
+            background: rgba(212, 175, 55, 0.1);
+            align-self: flex-start;
+            border-left: 3px solid var(--gold);
+        }
+        
+        .message.user {
+            background: rgba(47, 79, 79, 0.1);
+            align-self: flex-end;
+            border-right: 3px solid var(--slate);
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05), rgba(47, 79, 79, 0.05));
+            border-radius: 15px;
+            margin: 80px 0;
+            border: 2px dashed var(--gold);
+        }
+        
+        .cta-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            color: var(--sienna);
+            margin-bottom: 20px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: linear-gradient(135deg, var(--gold), var(--sienna));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(139, 69, 19, 0.4);
+            background: linear-gradient(135deg, var(--sienna), var(--crimson));
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+            border-top: 1px solid rgba(139, 69, 19, 0.2);
+            color: var(--slate);
+        }
+        
+        @media (max-width: 768px) {
+            .widgets-grid { grid-template-columns: 1fr; }
+            .logo { font-size: 2.5rem; flex-direction: column; gap: 10px; }
+            .section { padding: 25px; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-scroll logo-icon"></i>
+                The Codex Chronicle
+                <i class="fas fa-feather-alt logo-icon"></i>
+            </div>
+            <p class="tagline">Where your story finds its immortal form</p>
+            <p style="color: var(--slate); max-width: 800px; margin: 0 auto;">
+                An intelligent novel planner that remembers everything. Just talk about your story, 
+                and watch it transform into a beautifully organized manuscript.
+            </p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="section">
+            <h2 class="section-title">The Simple, Powerful Way to Plan Your Novel</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: var(--slate); max-width: 900px; margin: 0 auto 40px;">
+                Forget complex planners with endless widgets. The Codex Chronicle uses three intelligent tools 
+                that work together seamlessly, remembering your entire story as you build it.
+            </p>
+            
+            <div class="widgets-grid">
+                <div class="widget-card">
+                    <div class="widget-icon"><i class="fas fa-comments"></i></div>
+                    <h3 class="widget-title">The Chronicle Conversation</h3>
+                    <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
+                        Just talk about your story naturally. The AI remembers every detail.
+                    </p>
+                    <ul class="widget-features">
+                        <li><i class="fas fa-check"></i> Remembers characters, plot, settings</li>
+                        <li><i class="fas fa-check"></i> Suggests connected plot twists</li>
+                        <li><i class="fas fa-check"></i> No repeating yourself</li>
+                    </ul>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="widget-icon"><i class="fas fa-palette"></i></div>
+                    <h3 class="widget-title">The Illumination Studio</h3>
+                    <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
+                        Generate beautiful images that match your story perfectly.
+                    </p>
+                    <ul class="widget-features">
+                        <li><i class="fas fa-check"></i> One-click character portraits</li>
+                        <li><i class="fas fa-check"></i> Scene images from your descriptions</li>
+                        <li><i class="fas fa-check"></i> Consistent artistic style</li>
+                    </ul>
+                </div>
+                
+                <div class="widget-card">
+                    <div class="widget-icon"><i class="fas fa-book"></i></div>
+                    <h3 class="widget-title">The Final Codex</h3>
+                    <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
+                        Auto-generates a beautiful PDF manuscript from your conversation.
+                    </p>
+                    <ul class="widget-features">
+                        <li><i class="fas fa-check"></i> Auto-compiles everything</li>
+                        <li><i class="fas fa-check"></i> Professional PDF formatting</li>
+                        <li><i class="fas fa-check"></i> Includes all generated images</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">See It In Action</h2>
+            <div class="demo-interface">
+                <div class="demo-header"><i class="fas fa-comment-alt"></i> The Chronicle Conversation</div>
+                <div class="demo-body">
+                    <div class="message ai">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
+                        <div>Welcome! Tell me about your story - characters, plot ideas, anything. I'll remember everything.</div>
+                    </div>
+                    <div class="message user">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
+                        <div>My protagonist is Elara, a librarian who discovers a book that glows at midnight.</div>
+                    </div>
+                    <div class="message ai">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
+                        <div>Elara the librarian + mysterious glowing book. What happens when she opens it?</div>
+                    </div>
+                    <div class="message user">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
+                        <div>Plot twist: The book contains her grandfather's lost research about magical libraries.</div>
+                    </div>
+                    <div class="message ai">
+                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
+                        <div>Great twist! So Elara's discovery connects to family history. This could explain why the book chose her.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2 class="cta-title">Begin Your Chronicle</h2>
+            <p style="font-size: 1.2rem; color: var(--slate); max-width: 700px; margin: 0 auto 30px;">
+                Join writers who have turned conversation into completed manuscripts. 
+                No learning curve, no complex tools - just your story, beautifully realized.
+            </p>
+            <button class="cta-button" onclick="launchApp()">
+                <i class="fas fa-play-circle"></i> Launch The Codex Chronicle
+            </button>
+            <p style="margin-top: 20px; color: var(--slate); font-size: 0.9rem;">
+                Free forever • No account required • Works on all devices
+            </p>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 20px; color: var(--sienna);">
+                <i class="fas fa-scroll"></i> The Codex Chronicle
+            </div>
+            <p>&copy; 2024 The Codex Chronicle. Every story deserves its proper chronicle.</p>
+        </div>
+    </footer>
+
+    <script>
+        function launchApp() {
+            // Replace this URL with your actual PartyRock link when you have it
+            const partyRockURL = 'https://partyrock.aws';
+            const message = `🚀 Ready to launch!\n\nIn a real implementation, this would open your PartyRock app.\n\nFor now:\n1. Create your app at: ${partyRockURL}\n2. Use the 3-widget prompts provided\n3. Come back and update this link!`;
+            alert(message);
+            // When you have your actual link, uncomment:
+            // window.open('YOUR-ACTUAL-PARTYROCK-URL', '_blank');
+        }
+        
+        // Simple hover effects
+        document.querySelectorAll('.widget-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
