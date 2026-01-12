@@ -293,11 +293,125 @@
             box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
         }
         
+        /* ===== POPUP MODAL STYLES ===== */
+        .fullscreen-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--sienna), var(--slate));
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-fullscreen {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .close-fullscreen:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .fullscreen-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+        
+        .modal-controls {
+            padding: 15px 25px;
+            background: var(--parchment);
+            border-top: 1px solid rgba(139, 69, 19, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--slate);
+        }
+        
+        .modal-controls a {
+            color: var(--crimson);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .modal-controls a:hover {
+            text-decoration: underline;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .iframe-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--slate);
+        }
+        
+        .iframe-loading i {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.6; transform: scale(0.95); }
+        }
+        
+        body.modal-open {
+            overflow: hidden;
+        }
+        
         @media (max-width: 768px) {
             .widgets-grid { grid-template-columns: 1fr; }
             .logo { font-size: 2.5rem; flex-direction: column; gap: 10px; }
             .section { padding: 25px; }
             .section-title { font-size: 2rem; }
+            .modal-controls { flex-direction: column; gap: 10px; text-align: center; }
         }
     </style>
 </head>
@@ -418,12 +532,12 @@
                 No learning curve, no complex tools - just your story, beautifully realized.
             </p>
             <button class="cta-button" onclick="launchApp()">
-                <i class="fas fa-play-circle"></i> Launch The Full Codex Chronicle
+                <i class="fas fa-play-circle"></i> Launch The Codex Chronicle
             </button>
             <div style="margin-top: 20px;">
                 <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
                    target="_blank" class="partyrock-btn">
-                    <i class="fas fa-external-link-alt"></i> Open in PartyRock
+                    <i class="fas fa-external-link-alt"></i> Open in New Tab
                 </a>
             </div>
             <p style="margin-top: 20px; color: var(--slate); font-size: 0.9rem;">
@@ -460,9 +574,69 @@
         // Your actual PartyRock URL
         const PARTYROCK_URL = 'https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge';
         
-        // Launch the full app
+        // Launch the app in a fullscreen modal (POPUP VERSION)
         function launchApp() {
-            window.open(PARTYROCK_URL, '_blank');
+            // Create the modal HTML
+            const modalHTML = `
+                <div class="fullscreen-modal" id="partyrockModal">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-scroll"></i> The Codex Chronicle AI App</h3>
+                        <button class="close-fullscreen" onclick="closeFullscreen()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="iframe-loading" id="loadingIndicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading your AI writing assistant...</p>
+                    </div>
+                    
+                    <iframe 
+                        src="${PARTYROCK_URL}" 
+                        class="fullscreen-iframe"
+                        allow="clipboard-write"
+                        title="The Codex Chronicle AI App"
+                        id="partyrockIframe"
+                        onload="hideLoading()">
+                    </iframe>
+                    
+                    <div class="modal-controls">
+                        <div>
+                            <i class="fas fa-info-circle"></i> 
+                            This AI app runs directly in your browser
+                        </div>
+                        <a href="${PARTYROCK_URL}" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Open in new tab
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Prevent body scrolling
+            document.body.classList.add('modal-open');
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function closeOnEscape(e) {
+                if (e.key === 'Escape') closeFullscreen();
+            });
+        }
+        
+        // Hide loading indicator when iframe loads
+        function hideLoading() {
+            const loading = document.getElementById('loadingIndicator');
+            if (loading) loading.style.display = 'none';
+        }
+        
+        // Close the fullscreen modal
+        function closeFullscreen() {
+            const modal = document.getElementById('partyrockModal');
+            if (modal) {
+                modal.remove();
+                document.body.classList.remove('modal-open');
+            }
         }
         
         // Open specific widget info
@@ -561,6 +735,13 @@
             // Close modal on background click
             document.getElementById('widgetModal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
+            });
+            
+            // Close fullscreen modal on background click
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('fullscreen-modal')) {
+                    closeFullscreen();
+                }
             });
         });
     </script>
