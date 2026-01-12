@@ -96,6 +96,7 @@
             transition: transform 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         
         .widget-card:hover {
@@ -165,6 +166,8 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
         }
         
         .message {
@@ -172,6 +175,12 @@
             padding: 15px 20px;
             border-radius: 10px;
             position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .message:hover {
+            transform: scale(1.02);
         }
         
         .message.ai {
@@ -233,6 +242,57 @@
             color: var(--slate);
         }
         
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--slate);
+        }
+        
+        .partyrock-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #FF9900, #FF6600);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin: 15px 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .partyrock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+        }
+        
         @media (max-width: 768px) {
             .widgets-grid { grid-template-columns: 1fr; }
             .logo { font-size: 2.5rem; flex-direction: column; gap: 10px; }
@@ -266,7 +326,7 @@
             </p>
             
             <div class="widgets-grid">
-                <div class="widget-card">
+                <div class="widget-card" onclick="openWidget('chronicle')">
                     <div class="widget-icon"><i class="fas fa-comments"></i></div>
                     <h3 class="widget-title">The Chronicle Conversation</h3>
                     <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
@@ -279,7 +339,7 @@
                     </ul>
                 </div>
                 
-                <div class="widget-card">
+                <div class="widget-card" onclick="openWidget('illumination')">
                     <div class="widget-icon"><i class="fas fa-palette"></i></div>
                     <h3 class="widget-title">The Illumination Studio</h3>
                     <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
@@ -292,7 +352,7 @@
                     </ul>
                 </div>
                 
-                <div class="widget-card">
+                <div class="widget-card" onclick="openWidget('codex')">
                     <div class="widget-icon"><i class="fas fa-book"></i></div>
                     <h3 class="widget-title">The Final Codex</h3>
                     <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
@@ -311,27 +371,42 @@
             <h2 class="section-title">See It In Action</h2>
             <div class="demo-interface">
                 <div class="demo-header"><i class="fas fa-comment-alt"></i> The Chronicle Conversation</div>
-                <div class="demo-body">
-                    <div class="message ai">
+                <div class="demo-body" id="conversationDemo">
+                    <div class="message ai" onclick="showMessage('ai')">
                         <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
                         <div>Welcome! Tell me about your story - characters, plot ideas, anything. I'll remember everything.</div>
                     </div>
-                    <div class="message user">
+                    <div class="message user" onclick="showMessage('user')">
                         <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
                         <div>My protagonist is Elara, a librarian who discovers a book that glows at midnight.</div>
                     </div>
-                    <div class="message ai">
+                    <div class="message ai" onclick="showMessage('ai')">
                         <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
                         <div>Elara the librarian + mysterious glowing book. What happens when she opens it?</div>
                     </div>
-                    <div class="message user">
+                    <div class="message user" onclick="showMessage('user')">
                         <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
                         <div>Plot twist: The book contains her grandfather's lost research about magical libraries.</div>
                     </div>
-                    <div class="message ai">
+                    <div class="message ai" onclick="showMessage('ai')">
                         <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
                         <div>Great twist! So Elara's discovery connects to family history. This could explain why the book chose her.</div>
                     </div>
+                </div>
+                
+                <!-- Interactive Input -->
+                <div style="padding: 20px; border-top: 1px solid rgba(139, 69, 19, 0.2);">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="userInput" placeholder="Type your story idea here..." 
+                               style="flex: 1; padding: 12px; border: 1px solid var(--sienna); border-radius: 5px; font-family: 'Source Serif Pro', serif;">
+                        <button onclick="addUserMessage()" 
+                                style="padding: 12px 25px; background: var(--sienna); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                            Send
+                        </button>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--slate); text-align: center;">
+                        Try it out! This demo simulates how the AI responds to your story ideas.
+                    </p>
                 </div>
             </div>
         </section>
@@ -343,8 +418,14 @@
                 No learning curve, no complex tools - just your story, beautifully realized.
             </p>
             <button class="cta-button" onclick="launchApp()">
-                <i class="fas fa-play-circle"></i> Launch The Codex Chronicle
+                <i class="fas fa-play-circle"></i> Launch The Full Codex Chronicle
             </button>
+            <div style="margin-top: 20px;">
+                <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
+                   target="_blank" class="partyrock-btn">
+                    <i class="fas fa-external-link-alt"></i> Open in PartyRock
+                </a>
+            </div>
             <p style="margin-top: 20px; color: var(--slate); font-size: 0.9rem;">
                 Free forever • No account required • Works on all devices
             </p>
@@ -356,27 +437,130 @@
             <div style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 20px; color: var(--sienna);">
                 <i class="fas fa-scroll"></i> The Codex Chronicle
             </div>
+            <p>Connected to: <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
+                               target="_blank" style="color: var(--crimson);">The Scriptorium: Narrative Forge</a></p>
             <p>&copy; 2024 The Codex Chronicle. Every story deserves its proper chronicle.</p>
         </div>
     </footer>
 
+    <!-- Modal for Widget Info -->
+    <div class="modal" id="widgetModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h3 id="modalTitle" style="color: var(--sienna); margin-bottom: 20px;"></h3>
+            <p id="modalDescription" style="margin-bottom: 20px;"></p>
+            <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
+               target="_blank" class="partyrock-btn">
+                <i class="fas fa-external-link-alt"></i> Open This Tool in PartyRock
+            </a>
+        </div>
+    </div>
+
     <script>
+        // Your actual PartyRock URL
+        const PARTYROCK_URL = 'https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge';
+        
+        // Launch the full app
         function launchApp() {
-            // Replace this URL with your actual PartyRock link when you have it
-            const partyRockURL = 'https://partyrock.aws';
-            const message = `🚀 Ready to launch!\n\nIn a real implementation, this would open your PartyRock app.\n\nFor now:\n1. Create your app at: ${partyRockURL}\n2. Use the 3-widget prompts provided\n3. Come back and update this link!`;
-            alert(message);
-            // When you have your actual link, uncomment:
-            // window.open('YOUR-ACTUAL-PARTYROCK-URL', '_blank');
+            window.open(PARTYROCK_URL, '_blank');
         }
         
-        // Simple hover effects
-        document.querySelectorAll('.widget-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-10px)';
+        // Open specific widget info
+        function openWidget(widgetType) {
+            const modal = document.getElementById('widgetModal');
+            const title = document.getElementById('modalTitle');
+            const description = document.getElementById('modalDescription');
+            
+            const widgets = {
+                'chronicle': {
+                    title: 'The Chronicle Conversation',
+                    desc: 'This is your main AI conversation tool. It remembers every detail of your story, suggests plot connections, and helps develop your narrative organically.'
+                },
+                'illumination': {
+                    title: 'The Illumination Studio',
+                    desc: 'Generate character portraits, scene images, and book covers that match your story perfectly. All images maintain a consistent artistic style.'
+                },
+                'codex': {
+                    title: 'The Final Codex',
+                    desc: 'Automatically compiles your entire story into a professionally formatted PDF manuscript, complete with all generated images and organized chapters.'
+                }
+            };
+            
+            title.textContent = widgets[widgetType].title;
+            description.textContent = widgets[widgetType].desc;
+            modal.style.display = 'flex';
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('widgetModal').style.display = 'none';
+        }
+        
+        // Show message info
+        function showMessage(type) {
+            const messages = {
+                'ai': 'This is how the AI responds to your story ideas, remembering previous details and suggesting connections.',
+                'user': 'Your input - just talk naturally about your story. The AI will remember everything you say.'
+            };
+            alert(messages[type]);
+        }
+        
+        // Interactive demo conversation
+        function addUserMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
+                <div>${message}</div>
+            `;
+            userMsg.onclick = () => showMessage('user');
+            
+            document.getElementById('conversationDemo').appendChild(userMsg);
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = [
+                    "Fascinating! I've added that to your story archive. What happens next?",
+                    "Great detail! How does this revelation affect your protagonist?",
+                    "Interesting development! What conflict arises from this situation?",
+                    "Perfect! This connects beautifully with your earlier idea about...",
+                    "Noted! I've updated your character profiles with this information.",
+                    "Intriguing! Let me suggest a possible plot twist based on this..."
+                ];
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                aiMsg.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
+                    <div>${responses[Math.floor(Math.random() * responses.length)]}</div>
+                `;
+                aiMsg.onclick = () => showMessage('ai');
+                
+                document.getElementById('conversationDemo').appendChild(aiMsg);
+                
+                // Auto-scroll to bottom
+                document.getElementById('conversationDemo').scrollTop = 
+                    document.getElementById('conversationDemo').scrollHeight;
+            }, 1000);
+        }
+        
+        // Interactive features on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make Enter key work in input
+            document.getElementById('userInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addUserMessage();
             });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0)';
+            
+            // Close modal on background click
+            document.getElementById('widgetModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
             });
         });
     </script>
