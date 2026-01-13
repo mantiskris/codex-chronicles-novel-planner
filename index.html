@@ -6,7 +6,7 @@
     <title>Quill & Codex | Complete Novel Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Homemade+Apple&family=Nothing+You+Could+Do&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Homemade+Apple&family=Nothing+You+Could+Do&family=Shadows+Into+Light&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -1024,8 +1024,8 @@
                     <div id="previewContainer" style="padding: 20px; background: var(--white); min-height: 500px; overflow-y: auto;">
                         <!-- Preview will be generated here -->
                     </div>
-                    <button class="btn btn-primary" onclick="generateCompletePDF()" style="margin-top: 20px; width: 100%; padding: 15px;">
-                        <i class="fas fa-download"></i> Generate Complete Codex (PDF with Everything)
+                    <button class="btn btn-primary" onclick="generateAestheticPDF()" style="margin-top: 20px; width: 100%; padding: 15px;">
+                        <i class="fas fa-download"></i> Generate Aesthetic Codex (Handwritten PDF)
                     </button>
                 </div>
             </main>
@@ -1062,12 +1062,12 @@
                     <i class="fas fa-folder-open"></i> Load Codex
                 </button>
                 
-                <button class="control-btn" onclick="exportToJSON()">
-                    <i class="fas fa-file-export"></i> Export as JSON
+                <button class="control-btn" onclick="generateAestheticPDF()">
+                    <i class="fas fa-file-pdf"></i> Generate Codex PDF
                 </button>
                 
-                <button class="control-btn" onclick="importFromJSON()">
-                    <i class="fas fa-file-import"></i> Import JSON
+                <button class="control-btn" onclick="exportToJSON()">
+                    <i class="fas fa-file-export"></i> Export as JSON
                 </button>
                 
                 <button class="control-btn clear" onclick="clearEverything()">
@@ -1161,10 +1161,6 @@
                 audience: '',
                 created: new Date().toISOString(),
                 modified: new Date().toISOString()
-            },
-            images: {
-                world: {},
-                characters: {}
             }
         };
 
@@ -1174,10 +1170,6 @@
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
         const currentTabTitle = document.getElementById('currentTabTitle');
-
-        // Image storage
-        let worldImages = [];
-        let characterImages = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1311,8 +1303,7 @@
                 category: document.getElementById('worldCategory').value,
                 name: document.getElementById('worldName').value,
                 description: document.getElementById('worldDescription').value,
-                tags: document.getElementById('worldTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
-                images: worldImages.filter(img => img.category === 'world-' + worldId)
+                tags: document.getElementById('worldTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
             };
             
             codex.world.push(worldElement);
@@ -1322,42 +1313,9 @@
             document.getElementById('worldName').value = '';
             document.getElementById('worldDescription').value = '';
             document.getElementById('worldTags').value = '';
-            document.getElementById('worldImagePreview').innerHTML = '';
-            worldImages = worldImages.filter(img => img.category !== 'world-' + worldId);
             
             showNotification('World element added!', 'success');
             updateStats();
-        }
-
-        function handleWorldImageUpload(event) {
-            const files = event.target.files;
-            const worldId = 'world-' + Date.now();
-            
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const imageData = e.target.result;
-                        worldImages.push({
-                            id: Date.now(),
-                            category: worldId,
-                            data: imageData,
-                            name: file.name
-                        });
-                        
-                        // Update preview
-                        const preview = document.getElementById('worldImagePreview');
-                        preview.innerHTML += `
-                            <div class="image-preview">
-                                <button class="remove-image" onclick="removeImage('world', ${worldImages.length - 1})">×</button>
-                                <img src="${imageData}" alt="${file.name}">
-                                <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
-                            </div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
         }
 
         function updateWorldTab() {
@@ -1384,17 +1342,6 @@
                                 ${world.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                             </div>
                         </div>` : ''}
-                        ${world.images && world.images.length > 0 ? `
-                        <div class="form-group">
-                            <label>Inspiration Images:</label>
-                            <div class="image-preview-container">
-                                ${world.images.map(img => `
-                                    <div class="image-preview">
-                                        <img src="${img.data}" alt="${img.name}">
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>` : ''}
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', worldHTML);
@@ -1419,8 +1366,7 @@
                 personality: document.getElementById('charPersonality').value,
                 backstory: document.getElementById('charBackstory').value,
                 arc: document.getElementById('charArc').value,
-                tags: document.getElementById('charTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
-                images: characterImages.filter(img => img.category === 'character-' + charId)
+                tags: document.getElementById('charTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
             };
             
             codex.characters.push(character);
@@ -1433,42 +1379,9 @@
             document.getElementById('charBackstory').value = '';
             document.getElementById('charArc').value = '';
             document.getElementById('charTags').value = '';
-            document.getElementById('charImagePreview').innerHTML = '';
-            characterImages = characterImages.filter(img => img.category !== 'character-' + charId);
             
             showNotification('Character created!', 'success');
             updateStats();
-        }
-
-        function handleCharImageUpload(event) {
-            const files = event.target.files;
-            const charId = 'character-' + Date.now();
-            
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const imageData = e.target.result;
-                        characterImages.push({
-                            id: Date.now(),
-                            category: charId,
-                            data: imageData,
-                            name: file.name
-                        });
-                        
-                        // Update preview
-                        const preview = document.getElementById('charImagePreview');
-                        preview.innerHTML += `
-                            <div class="image-preview">
-                                <button class="remove-image" onclick="removeImage('character', ${characterImages.length - 1})">×</button>
-                                <img src="${imageData}" alt="${file.name}">
-                                <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
-                            </div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
         }
 
         function updateCharactersTab() {
@@ -1507,17 +1420,6 @@
                                 ${char.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                             </div>
                         </div>` : ''}
-                        ${char.images && char.images.length > 0 ? `
-                        <div class="form-group">
-                            <label>Character Images:</label>
-                            <div class="image-preview-container">
-                                ${char.images.map(img => `
-                                    <div class="image-preview">
-                                        <img src="${img.data}" alt="${img.name}">
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>` : ''}
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', charHTML);
@@ -1542,7 +1444,7 @@
                 location: document.getElementById('sceneLocation').value,
                 description: document.getElementById('sceneDescription').value,
                 impact: document.getElementById('sceneImpact').value,
-                timelinePosition: null // Will be set in timeline
+                timelinePosition: null
             };
             
             codex.scenes.push(scene);
@@ -2002,412 +1904,785 @@
             previewHTML += `
                 <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--border);">
                     <p><strong>Total Planning Elements:</strong> ${codex.characters.length + codex.world.length + codex.scenes.length + codex.outline.length + codex.notes.length}</p>
-                    <p><em>Click "Generate Complete Codex" to export everything including all text and images to a comprehensive PDF.</em></p>
+                    <p><em>Click "Generate Aesthetic Codex" to export everything in a beautiful handwritten-style PDF.</em></p>
                 </div>
             </div>`;
             
             container.innerHTML = previewHTML;
         }
 
-        // Generate complete PDF with everything
-        function generateCompletePDF() {
-            showNotification('Preparing comprehensive PDF... This may take a moment.', 'info');
+        // Generate AESTHETIC PDF with handwritten style
+        function generateAestheticPDF() {
+            showNotification('Creating beautiful handwritten Codex PDF...', 'info');
             
             setTimeout(() => {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 let yPos = 20;
                 const pageWidth = pdf.internal.pageSize.width;
-                const margin = 20;
+                const margin = 25;
                 const contentWidth = pageWidth - (margin * 2);
+                const lineHeight = 6.5;
                 
-                // Title Page
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(24);
-                pdf.text(codex.metadata.title || "Untitled Manuscript", pageWidth / 2, yPos, { align: 'center' });
-                yPos += 15;
+                // Draw paper texture effect (subtle dots)
+                function drawPaperTexture() {
+                    pdf.setDrawColor(220, 220, 220);
+                    pdf.setLineWidth(0.1);
+                    
+                    // Draw subtle grid lines
+                    for (let y = margin; y < 280; y += 8) {
+                        pdf.line(margin, y, pageWidth - margin, y);
+                    }
+                    
+                    // Draw subtle dots
+                    pdf.setFillColor(240, 240, 240);
+                    for (let x = margin + 5; x < pageWidth - margin; x += 15) {
+                        for (let y = margin + 5; y < 280; y += 15) {
+                            pdf.circle(x, y, 0.2, 'F');
+                        }
+                    }
+                }
                 
-                pdf.setFontSize(16);
-                pdf.setFont("helvetica", "normal");
-                pdf.text(`by ${codex.metadata.author || "Anonymous"}`, pageWidth / 2, yPos, { align: 'center' });
-                yPos += 10;
+                // Draw ink blot decorations
+                function drawInkBlot(x, y, size) {
+                    pdf.setFillColor(0, 0, 0);
+                    pdf.circle(x, y, size, 'F');
+                    pdf.circle(x + size/2, y - size/3, size/1.5, 'F');
+                    pdf.circle(x - size/2, y + size/3, size/1.5, 'F');
+                }
                 
+                // Title Page with aesthetic design
+                drawPaperTexture();
+                
+                // Draw ink blots
+                drawInkBlot(40, 40, 8);
+                drawInkBlot(pageWidth - 40, 240, 6);
+                
+                // Title in elegant style
+                pdf.setFont("times", "italic");
+                pdf.setFontSize(28);
+                pdf.setTextColor(0, 0, 0);
+                const title = codex.metadata.title || "Untitled Manuscript";
+                pdf.text(title, pageWidth / 2, 100, { align: 'center' });
+                
+                // Author
+                pdf.setFontSize(18);
+                pdf.setFont("times", "normal");
+                pdf.text(`by ${codex.metadata.author || "Anonymous"}`, pageWidth / 2, 120, { align: 'center' });
+                
+                // Decorative line
+                pdf.setDrawColor(0, 0, 0);
+                pdf.setLineWidth(0.5);
+                pdf.line(pageWidth / 2 - 40, 130, pageWidth / 2 + 40, 130);
+                
+                // Details in smaller font
                 pdf.setFontSize(12);
-                pdf.text(`Genre: ${codex.metadata.genre || "Not specified"}`, pageWidth / 2, yPos, { align: 'center' });
-                yPos += 7;
-                pdf.text(`Audience: ${codex.metadata.audience || "Not specified"}`, pageWidth / 2, yPos, { align: 'center' });
-                yPos += 7;
-                pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, yPos, { align: 'center' });
-                yPos += 30;
+                pdf.text(`Genre: ${codex.metadata.genre || "Not specified"}`, pageWidth / 2, 145, { align: 'center' });
+                pdf.text(`Audience: ${codex.metadata.audience || "Not specified"}`, pageWidth / 2, 155, { align: 'center' });
+                pdf.text(`Created with Quill & Codex`, pageWidth / 2, 165, { align: 'center' });
+                pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, 175, { align: 'center' });
                 
+                // Add page number in old book style
                 pdf.setFontSize(10);
-                pdf.text("Quill & Codex - Complete Novel Planning Document", pageWidth / 2, yPos, { align: 'center' });
+                pdf.setTextColor(100, 100, 100);
+                pdf.text("1", pageWidth / 2, 280, { align: 'center' });
                 
-                // Add new page for content
+                // TABLE OF CONTENTS PAGE
                 pdf.addPage();
-                yPos = 20;
+                drawPaperTexture();
+                yPos = margin;
                 
-                // Table of Contents placeholder
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(16);
-                pdf.text("Table of Contents", margin, yPos);
+                // Title
+                pdf.setFont("times", "bolditalic");
+                pdf.setFontSize(22);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text("Table of Contents", pageWidth / 2, yPos, { align: 'center' });
                 yPos += 20;
                 
-                let tocItems = [
-                    "Story Premise",
-                    "Characters",
-                    "World Building", 
-                    "Important Scenes",
-                    "Chapter Outline",
-                    "Writer's Notes",
-                    "Written Content"
-                ].filter((_, i) => {
-                    const hasContent = [
-                        codex.premise.theme || codex.premise.core,
-                        codex.characters.length > 0,
-                        codex.world.length > 0,
-                        codex.scenes.length > 0,
-                        codex.outline.length > 0,
-                        codex.notes.length > 0,
-                        Object.keys(codex.writing).length > 0
-                    ][i];
-                    return hasContent;
-                });
-                
-                tocItems.forEach((item, i) => {
-                    pdf.setFont("helvetica", "normal");
-                    pdf.setFontSize(11);
-                    pdf.text(`${i + 1}. ${item}`, margin, yPos);
-                    yPos += 7;
-                });
-                
-                // Premise Section
-                pdf.addPage();
-                yPos = 20;
-                
-                pdf.setFont("helvetica", "bold");
-                pdf.setFontSize(16);
-                pdf.text("1. Story Premise", margin, yPos);
+                // Draw decorative line
+                pdf.setDrawColor(0, 0, 0);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin, yPos, pageWidth - margin, yPos);
                 yPos += 15;
                 
-                pdf.setFont("helvetica", "normal");
-                pdf.setFontSize(11);
+                // Table of Contents Items
+                pdf.setFont("times", "normal");
+                pdf.setFontSize(13);
                 
-                if (codex.premise.theme) {
-                    pdf.setFont("helvetica", "bold");
-                    pdf.text("Theme / Logline:", margin, yPos);
-                    yPos += 7;
-                    pdf.setFont("helvetica", "normal");
-                    const themeLines = pdf.splitTextToSize(codex.premise.theme, contentWidth);
-                    themeLines.forEach(line => {
-                        pdf.text(line, margin + 5, yPos);
-                        yPos += 7;
-                    });
-                    yPos += 5;
+                let tocY = yPos;
+                let tocPage = 2;
+                
+                // Premise
+                if (codex.premise.theme || codex.premise.core) {
+                    pdf.text("I. Story Premise", margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                    tocY += lineHeight + 2;
+                    tocPage++;
                 }
                 
-                if (codex.premise.core) {
-                    pdf.setFont("helvetica", "bold");
-                    pdf.text("Core Premise:", margin, yPos);
-                    yPos += 7;
-                    pdf.setFont("helvetica", "normal");
-                    const coreLines = pdf.splitTextToSize(codex.premise.core, contentWidth);
-                    coreLines.forEach(line => {
-                        pdf.text(line, margin + 5, yPos);
-                        yPos += 7;
-                    });
-                    yPos += 5;
-                }
-                
-                // Characters Section
+                // Characters
                 if (codex.characters.length > 0) {
-                    if (yPos > 250) {
-                        pdf.addPage();
-                        yPos = 20;
-                    } else {
-                        yPos += 10;
-                    }
-                    
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text("2. Characters", margin, yPos);
-                    yPos += 15;
-                    
-                    codex.characters.forEach((char, index) => {
-                        if (yPos > 250) {
-                            pdf.addPage();
-                            yPos = 20;
-                        } else if (index > 0) {
-                            yPos += 10;
-                        }
-                        
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.text(`${char.name} - ${char.role}`, margin, yPos);
-                        yPos += 10;
-                        
-                        pdf.setFont("helvetica", "normal");
-                        pdf.setFontSize(10);
-                        
-                        const sections = [
-                            ["Appearance", char.appearance],
-                            ["Personality", char.personality],
-                            ["Backstory", char.backstory],
-                            ["Character Arc", char.arc]
-                        ];
-                        
-                        sections.forEach(([title, content]) => {
-                            if (content) {
-                                pdf.setFont("helvetica", "bold");
-                                pdf.text(`${title}:`, margin, yPos);
-                                yPos += 6;
-                                pdf.setFont("helvetica", "normal");
-                                const lines = pdf.splitTextToSize(content, contentWidth);
-                                lines.forEach(line => {
-                                    pdf.text(line, margin + 5, yPos);
-                                    yPos += 6;
-                                });
-                                yPos += 3;
-                            }
-                        });
-                    });
+                    pdf.text(`II. Characters (${codex.characters.length})`, margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                    tocY += lineHeight + 2;
+                    tocPage += Math.ceil(codex.characters.length / 3);
                 }
                 
-                // World Building Section
+                // World Building
                 if (codex.world.length > 0) {
-                    if (yPos > 250) {
-                        pdf.addPage();
-                        yPos = 20;
-                    } else {
-                        yPos += 10;
-                    }
-                    
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text("3. World Building", margin, yPos);
-                    yPos += 15;
-                    
-                    codex.world.forEach((world, index) => {
-                        if (yPos > 250) {
-                            pdf.addPage();
-                            yPos = 20;
-                        } else if (index > 0) {
-                            yPos += 10;
-                        }
-                        
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.text(`${world.name} (${world.category})`, margin, yPos);
-                        yPos += 10;
-                        
-                        if (world.description) {
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(10);
-                            const lines = pdf.splitTextToSize(world.description, contentWidth);
-                            lines.forEach(line => {
-                                pdf.text(line, margin, yPos);
-                                yPos += 6;
-                            });
-                        }
-                    });
+                    pdf.text(`III. World Building (${codex.world.length})`, margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                    tocY += lineHeight + 2;
+                    tocPage += Math.ceil(codex.world.length / 4);
                 }
                 
-                // Important Scenes Section
+                // Important Scenes
                 if (codex.scenes.length > 0) {
-                    if (yPos > 250) {
-                        pdf.addPage();
-                        yPos = 20;
-                    } else {
-                        yPos += 10;
-                    }
-                    
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text("4. Important Scenes", margin, yPos);
-                    yPos += 15;
-                    
-                    codex.scenes.forEach((scene, index) => {
-                        if (yPos > 250) {
-                            pdf.addPage();
-                            yPos = 20;
-                        } else if (index > 0) {
-                            yPos += 10;
-                        }
-                        
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.text(`${scene.title} (${scene.type})`, margin, yPos);
-                        yPos += 10;
-                        
-                        pdf.setFont("helvetica", "normal");
-                        pdf.setFontSize(10);
-                        
-                        const details = [
-                            ["Characters", scene.characters.join(', ')],
-                            ["Location", scene.location],
-                            ["Description", scene.description],
-                            ["Impact", scene.impact]
-                        ];
-                        
-                        details.forEach(([title, content]) => {
-                            if (content) {
-                                pdf.setFont("helvetica", "bold");
-                                pdf.text(`${title}:`, margin, yPos);
-                                yPos += 6;
-                                pdf.setFont("helvetica", "normal");
-                                const lines = pdf.splitTextToSize(content, contentWidth);
-                                lines.forEach(line => {
-                                    pdf.text(line, margin + 5, yPos);
-                                    yPos += 6;
-                                });
-                                yPos += 3;
-                            }
-                        });
-                    });
+                    pdf.text(`IV. Important Scenes (${codex.scenes.length})`, margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                    tocY += lineHeight + 2;
+                    tocPage += Math.ceil(codex.scenes.length / 3);
                 }
                 
-                // Chapter Outline Section
+                // Chapter Outline
                 if (codex.outline.length > 0) {
-                    if (yPos > 250) {
-                        pdf.addPage();
-                        yPos = 20;
-                    } else {
-                        yPos += 10;
-                    }
-                    
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text("5. Chapter Outline", margin, yPos);
-                    yPos += 15;
-                    
-                    codex.outline.forEach((chapter, index) => {
-                        if (yPos > 250) {
-                            pdf.addPage();
-                            yPos = 20;
-                        } else if (index > 0) {
-                            yPos += 10;
-                        }
-                        
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.text(`${chapter.number}: ${chapter.title}`, margin, yPos);
-                        yPos += 10;
-                        
-                        pdf.setFont("helvetica", "normal");
-                        pdf.setFontSize(10);
-                        
-                        const details = [
-                            ["POV Character", chapter.pov],
-                            ["Synopsis", chapter.synopsis],
-                            ["Purpose", chapter.purpose]
-                        ];
-                        
-                        details.forEach(([title, content]) => {
-                            if (content) {
-                                pdf.setFont("helvetica", "bold");
-                                pdf.text(`${title}:`, margin, yPos);
-                                yPos += 6;
-                                pdf.setFont("helvetica", "normal");
-                                const lines = pdf.splitTextToSize(content, contentWidth);
-                                lines.forEach(line => {
-                                    pdf.text(line, margin + 5, yPos);
-                                    yPos += 6;
-                                });
-                                yPos += 3;
-                            }
-                        });
-                    });
+                    pdf.text(`V. Chapter Outline (${codex.outline.length})`, margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                    tocY += lineHeight + 2;
+                    tocPage += Math.ceil(codex.outline.length / 2);
                 }
                 
-                // Writer's Notes Section
+                // Writer's Notes
                 if (codex.notes.length > 0) {
-                    if (yPos > 250) {
-                        pdf.addPage();
-                        yPos = 20;
-                    } else {
-                        yPos += 10;
-                    }
-                    
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text("6. Writer's Notes", margin, yPos);
-                    yPos += 15;
-                    
-                    codex.notes.forEach((note, index) => {
-                        if (yPos > 250) {
-                            pdf.addPage();
-                            yPos = 20;
-                        } else if (index > 0) {
-                            yPos += 10;
-                        }
-                        
-                        pdf.setFont("helvetica", "bold");
-                        pdf.setFontSize(12);
-                        pdf.text(`${note.title} [${note.category}]`, margin, yPos);
-                        yPos += 10;
-                        
-                        if (note.content) {
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(10);
-                            const lines = pdf.splitTextToSize(note.content, contentWidth);
-                            lines.forEach(line => {
-                                pdf.text(line, margin, yPos);
-                                yPos += 6;
-                            });
-                        }
-                        yPos += 5;
-                    });
+                    pdf.text(`VI. Writer's Notes (${codex.notes.length})`, margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                    tocY += lineHeight + 2;
+                    tocPage += Math.ceil(codex.notes.length / 4);
                 }
                 
-                // Written Content Section
+                // Written Content
                 const writtenChapters = Object.entries(codex.writing).filter(([_, text]) => text && text.trim());
                 if (writtenChapters.length > 0) {
-                    if (yPos > 250) {
-                        pdf.addPage();
-                        yPos = 20;
-                    } else {
+                    pdf.text(`VII. Written Content (${writtenChapters.length} chapters)`, margin, tocY);
+                    pdf.text(tocPage.toString(), pageWidth - margin, tocY, { align: 'right' });
+                }
+                
+                // Add page number
+                pdf.setFontSize(10);
+                pdf.setTextColor(100, 100, 100);
+                pdf.text("2", pageWidth / 2, 280, { align: 'center' });
+                
+                // STORY PREMISE SECTION
+                if (codex.premise.theme || codex.premise.core) {
+                    pdf.addPage();
+                    drawPaperTexture();
+                    yPos = margin;
+                    
+                    // Section header with Roman numeral
+                    pdf.setFont("times", "bolditalic");
+                    pdf.setFontSize(20);
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text("I. Story Premise", margin, yPos);
+                    yPos += 15;
+                    
+                    // Draw underline
+                    pdf.setDrawColor(0, 0, 0);
+                    pdf.setLineWidth(0.3);
+                    pdf.line(margin, yPos, margin + 50, yPos);
+                    yPos += 20;
+                    
+                    // Theme/Logline
+                    if (codex.premise.theme) {
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(14);
+                        pdf.text("Theme / Logline", margin, yPos);
+                        yPos += lineHeight + 2;
+                        
+                        pdf.setFont("times", "italic");
+                        pdf.setFontSize(12);
+                        const themeLines = pdf.splitTextToSize(codex.premise.theme, contentWidth);
+                        themeLines.forEach(line => {
+                            pdf.text(line, margin + 5, yPos);
+                            yPos += lineHeight;
+                        });
                         yPos += 10;
                     }
                     
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(16);
-                    pdf.text("7. Written Content", margin, yPos);
-                    yPos += 20;
-                    
-                    writtenChapters.forEach(([chapterNum, text], index) => {
-                        if (yPos > 250) {
-                            pdf.addPage();
-                            yPos = 20;
-                        } else if (index > 0) {
-                            yPos += 10;
-                        }
-                        
-                        pdf.setFont("helvetica", "bold");
+                    // Core Premise
+                    if (codex.premise.core) {
+                        pdf.setFont("times", "bold");
                         pdf.setFontSize(14);
-                        pdf.text(`Chapter: ${chapterNum}`, margin, yPos);
-                        yPos += 15;
+                        pdf.text("Core Premise", margin, yPos);
+                        yPos += lineHeight + 2;
                         
-                        if (text) {
-                            pdf.setFont("helvetica", "normal");
-                            pdf.setFontSize(11);
-                            const lines = pdf.splitTextToSize(text, contentWidth);
-                            lines.forEach(line => {
-                                if (yPos > 280) {
-                                    pdf.addPage();
-                                    yPos = 20;
-                                }
-                                pdf.text(line, margin, yPos);
-                                yPos += 7;
-                            });
-                        }
+                        pdf.setFont("times", "normal");
+                        pdf.setFontSize(12);
+                        const coreLines = pdf.splitTextToSize(codex.premise.core, contentWidth);
+                        coreLines.forEach(line => {
+                            pdf.text(line, margin + 5, yPos);
+                            yPos += lineHeight;
+                        });
                         yPos += 10;
+                    }
+                    
+                    // Characters in Premise
+                    if (codex.premise.characters) {
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(14);
+                        pdf.text("Central Characters", margin, yPos);
+                        yPos += lineHeight + 2;
+                        
+                        pdf.setFont("times", "normal");
+                        pdf.setFontSize(12);
+                        const charLines = pdf.splitTextToSize(codex.premise.characters, contentWidth);
+                        charLines.forEach(line => {
+                            pdf.text(line, margin + 5, yPos);
+                            yPos += lineHeight;
+                        });
+                        yPos += 10;
+                    }
+                    
+                    // World Connection
+                    if (codex.premise.world) {
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(14);
+                        pdf.text("World Connection", margin, yPos);
+                        yPos += lineHeight + 2;
+                        
+                        pdf.setFont("times", "normal");
+                        pdf.setFontSize(12);
+                        const worldLines = pdf.splitTextToSize(codex.premise.world, contentWidth);
+                        worldLines.forEach(line => {
+                            pdf.text(line, margin + 5, yPos);
+                            yPos += lineHeight;
+                        });
+                    }
+                    
+                    // Add page number
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.text("3", pageWidth / 2, 280, { align: 'center' });
+                }
+                
+                // CHARACTERS SECTION
+                if (codex.characters.length > 0) {
+                    codex.characters.forEach((character, index) => {
+                        if (index % 3 === 0) {
+                            pdf.addPage();
+                            drawPaperTexture();
+                            yPos = margin;
+                            
+                            // Section header
+                            pdf.setFont("times", "bolditalic");
+                            pdf.setFontSize(20);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(`II. Characters`, margin, yPos);
+                            yPos += 15;
+                            
+                            // Draw underline
+                            pdf.setDrawColor(0, 0, 0);
+                            pdf.setLineWidth(0.3);
+                            pdf.line(margin, yPos, margin + 50, yPos);
+                            yPos += 20;
+                        }
+                        
+                        // Character header
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(16);
+                        pdf.text(character.name, margin, yPos);
+                        yPos += lineHeight;
+                        
+                        pdf.setFont("times", "italic");
+                        pdf.setFontSize(12);
+                        pdf.text(`Role: ${character.role}`, margin + 5, yPos);
+                        yPos += lineHeight + 5;
+                        
+                        // Appearance
+                        if (character.appearance) {
+                            pdf.setFont("times", "bold");
+                            pdf.setFontSize(12);
+                            pdf.text("Appearance:", margin, yPos);
+                            yPos += lineHeight;
+                            
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const appearanceLines = pdf.splitTextToSize(character.appearance, contentWidth - 5);
+                            appearanceLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                            yPos += 5;
+                        }
+                        
+                        // Personality
+                        if (character.personality) {
+                            pdf.setFont("times", "bold");
+                            pdf.setFontSize(12);
+                            pdf.text("Personality:", margin, yPos);
+                            yPos += lineHeight;
+                            
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const personalityLines = pdf.splitTextToSize(character.personality, contentWidth - 5);
+                            personalityLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                            yPos += 5;
+                        }
+                        
+                        // Character divider
+                        if (index < codex.characters.length - 1 && (index + 1) % 3 !== 0) {
+                            pdf.setDrawColor(200, 200, 200);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(margin, yPos, pageWidth - margin, yPos);
+                            yPos += 15;
+                        }
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100, 100, 100);
+                        const currentPage = pdf.internal.getNumberOfPages();
+                        pdf.text(currentPage.toString(), pageWidth / 2, 280, { align: 'center' });
                     });
                 }
                 
+                // WORLD BUILDING SECTION
+                if (codex.world.length > 0) {
+                    codex.world.forEach((world, index) => {
+                        if (index % 4 === 0) {
+                            pdf.addPage();
+                            drawPaperTexture();
+                            yPos = margin;
+                            
+                            // Section header
+                            pdf.setFont("times", "bolditalic");
+                            pdf.setFontSize(20);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(`III. World Building`, margin, yPos);
+                            yPos += 15;
+                            
+                            // Draw underline
+                            pdf.setDrawColor(0, 0, 0);
+                            pdf.setLineWidth(0.3);
+                            pdf.line(margin, yPos, margin + 60, yPos);
+                            yPos += 20;
+                        }
+                        
+                        // World element header
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(14);
+                        pdf.text(`${world.name}`, margin, yPos);
+                        yPos += lineHeight;
+                        
+                        pdf.setFont("times", "italic");
+                        pdf.setFontSize(12);
+                        pdf.text(`Category: ${world.category}`, margin + 5, yPos);
+                        yPos += lineHeight + 5;
+                        
+                        // Description
+                        if (world.description) {
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const descLines = pdf.splitTextToSize(world.description, contentWidth - 5);
+                            descLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                        }
+                        
+                        // Tags
+                        if (world.tags && world.tags.length > 0) {
+                            yPos += 5;
+                            pdf.setFont("times", "italic");
+                            pdf.setFontSize(10);
+                            pdf.text(`Tags: ${world.tags.join(', ')}`, margin + 5, yPos);
+                            yPos += lineHeight;
+                        }
+                        
+                        // World element divider
+                        if (index < codex.world.length - 1 && (index + 1) % 4 !== 0) {
+                            pdf.setDrawColor(200, 200, 200);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(margin, yPos + 5, pageWidth - margin, yPos + 5);
+                            yPos += 15;
+                        }
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100, 100, 100);
+                        const currentPage = pdf.internal.getNumberOfPages();
+                        pdf.text(currentPage.toString(), pageWidth / 2, 280, { align: 'center' });
+                    });
+                }
+                
+                // IMPORTANT SCENES SECTION
+                if (codex.scenes.length > 0) {
+                    codex.scenes.forEach((scene, index) => {
+                        if (index % 3 === 0) {
+                            pdf.addPage();
+                            drawPaperTexture();
+                            yPos = margin;
+                            
+                            // Section header
+                            pdf.setFont("times", "bolditalic");
+                            pdf.setFontSize(20);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(`IV. Important Scenes`, margin, yPos);
+                            yPos += 15;
+                            
+                            // Draw underline
+                            pdf.setDrawColor(0, 0, 0);
+                            pdf.setLineWidth(0.3);
+                            pdf.line(margin, yPos, margin + 70, yPos);
+                            yPos += 20;
+                        }
+                        
+                        // Scene header
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(14);
+                        pdf.text(`${scene.title}`, margin, yPos);
+                        yPos += lineHeight;
+                        
+                        pdf.setFont("times", "italic");
+                        pdf.setFontSize(12);
+                        pdf.text(`Type: ${scene.type.replace('-', ' ')}`, margin + 5, yPos);
+                        yPos += lineHeight;
+                        
+                        // Details
+                        pdf.setFont("times", "normal");
+                        pdf.setFontSize(11);
+                        
+                        if (scene.characters.length > 0) {
+                            pdf.text(`Characters: ${scene.characters.join(', ')}`, margin + 5, yPos);
+                            yPos += lineHeight;
+                        }
+                        
+                        if (scene.location) {
+                            pdf.text(`Location: ${scene.location}`, margin + 5, yPos);
+                            yPos += lineHeight;
+                        }
+                        
+                        yPos += 5;
+                        
+                        // Description
+                        if (scene.description) {
+                            pdf.setFont("times", "italic");
+                            pdf.setFontSize(11);
+                            const descLines = pdf.splitTextToSize(scene.description, contentWidth - 5);
+                            descLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                        }
+                        
+                        // Impact
+                        if (scene.impact) {
+                            yPos += 5;
+                            pdf.setFont("times", "bold");
+                            pdf.setFontSize(11);
+                            pdf.text("Impact on Story:", margin, yPos);
+                            yPos += lineHeight;
+                            
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const impactLines = pdf.splitTextToSize(scene.impact, contentWidth - 5);
+                            impactLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                        }
+                        
+                        // Scene divider
+                        if (index < codex.scenes.length - 1 && (index + 1) % 3 !== 0) {
+                            pdf.setDrawColor(200, 200, 200);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(margin, yPos + 5, pageWidth - margin, yPos + 5);
+                            yPos += 15;
+                        }
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100, 100, 100);
+                        const currentPage = pdf.internal.getNumberOfPages();
+                        pdf.text(currentPage.toString(), pageWidth / 2, 280, { align: 'center' });
+                    });
+                }
+                
+                // CHAPTER OUTLINE SECTION
+                if (codex.outline.length > 0) {
+                    codex.outline.forEach((chapter, index) => {
+                        if (index % 2 === 0) {
+                            pdf.addPage();
+                            drawPaperTexture();
+                            yPos = margin;
+                            
+                            // Section header
+                            pdf.setFont("times", "bolditalic");
+                            pdf.setFontSize(20);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(`V. Chapter Outline`, margin, yPos);
+                            yPos += 15;
+                            
+                            // Draw underline
+                            pdf.setDrawColor(0, 0, 0);
+                            pdf.setLineWidth(0.3);
+                            pdf.line(margin, yPos, margin + 70, yPos);
+                            yPos += 20;
+                        }
+                        
+                        // Chapter header
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(16);
+                        pdf.text(`${chapter.number}: ${chapter.title}`, margin, yPos);
+                        yPos += lineHeight;
+                        
+                        if (chapter.pov) {
+                            pdf.setFont("times", "italic");
+                            pdf.setFontSize(12);
+                            pdf.text(`POV: ${chapter.pov}`, margin + 5, yPos);
+                            yPos += lineHeight + 5;
+                        }
+                        
+                        // Synopsis
+                        if (chapter.synopsis) {
+                            pdf.setFont("times", "bold");
+                            pdf.setFontSize(12);
+                            pdf.text("Synopsis:", margin, yPos);
+                            yPos += lineHeight;
+                            
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const synopsisLines = pdf.splitTextToSize(chapter.synopsis, contentWidth - 5);
+                            synopsisLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                            yPos += 5;
+                        }
+                        
+                        // Purpose
+                        if (chapter.purpose) {
+                            pdf.setFont("times", "bold");
+                            pdf.setFontSize(12);
+                            pdf.text("Purpose:", margin, yPos);
+                            yPos += lineHeight;
+                            
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const purposeLines = pdf.splitTextToSize(chapter.purpose, contentWidth - 5);
+                            purposeLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                        }
+                        
+                        // Chapter divider
+                        if (index < codex.outline.length - 1 && (index + 1) % 2 !== 0) {
+                            pdf.setDrawColor(200, 200, 200);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(margin, yPos + 10, pageWidth - margin, yPos + 10);
+                            yPos += 20;
+                        }
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100, 100, 100);
+                        const currentPage = pdf.internal.getNumberOfPages();
+                        pdf.text(currentPage.toString(), pageWidth / 2, 280, { align: 'center' });
+                    });
+                }
+                
+                // WRITER'S NOTES SECTION
+                if (codex.notes.length > 0) {
+                    codex.notes.forEach((note, index) => {
+                        if (index % 4 === 0) {
+                            pdf.addPage();
+                            drawPaperTexture();
+                            yPos = margin;
+                            
+                            // Section header
+                            pdf.setFont("times", "bolditalic");
+                            pdf.setFontSize(20);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(`VI. Writer's Notes`, margin, yPos);
+                            yPos += 15;
+                            
+                            // Draw underline
+                            pdf.setDrawColor(0, 0, 0);
+                            pdf.setLineWidth(0.3);
+                            pdf.line(margin, yPos, margin + 60, yPos);
+                            yPos += 20;
+                        }
+                        
+                        // Note header
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(14);
+                        pdf.text(note.title, margin, yPos);
+                        yPos += lineHeight;
+                        
+                        pdf.setFont("times", "italic");
+                        pdf.setFontSize(11);
+                        pdf.text(`Category: ${note.category}`, margin + 5, yPos);
+                        yPos += lineHeight + 5;
+                        
+                        // Note content
+                        if (note.content) {
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(11);
+                            const contentLines = pdf.splitTextToSize(note.content, contentWidth - 5);
+                            contentLines.forEach(line => {
+                                pdf.text(line, margin + 5, yPos);
+                                yPos += lineHeight;
+                            });
+                        }
+                        
+                        // Date
+                        yPos += 3;
+                        pdf.setFont("times", "italic");
+                        pdf.setFontSize(9);
+                        pdf.text(`Created: ${new Date(note.created).toLocaleDateString()}`, margin + 5, yPos);
+                        yPos += lineHeight;
+                        
+                        // Note divider
+                        if (index < codex.notes.length - 1 && (index + 1) % 4 !== 0) {
+                            pdf.setDrawColor(200, 200, 200);
+                            pdf.setLineWidth(0.2);
+                            pdf.line(margin, yPos + 5, pageWidth - margin, yPos + 5);
+                            yPos += 15;
+                        }
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100, 100, 100);
+                        const currentPage = pdf.internal.getNumberOfPages();
+                        pdf.text(currentPage.toString(), pageWidth / 2, 280, { align: 'center' });
+                    });
+                }
+                
+                // WRITTEN CONTENT SECTION
+                const writtenChapters = Object.entries(codex.writing).filter(([_, text]) => text && text.trim());
+                if (writtenChapters.length > 0) {
+                    writtenChapters.forEach(([chapterNum, text], index) => {
+                        pdf.addPage();
+                        drawPaperTexture();
+                        yPos = margin;
+                        
+                        // Section header for first chapter
+                        if (index === 0) {
+                            pdf.setFont("times", "bolditalic");
+                            pdf.setFontSize(20);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.text(`VII. Written Content`, margin, yPos);
+                            yPos += 15;
+                            
+                            // Draw underline
+                            pdf.setDrawColor(0, 0, 0);
+                            pdf.setLineWidth(0.3);
+                            pdf.line(margin, yPos, margin + 70, yPos);
+                            yPos += 25;
+                        }
+                        
+                        // Chapter header
+                        pdf.setFont("times", "bold");
+                        pdf.setFontSize(18);
+                        pdf.text(`Chapter: ${chapterNum}`, pageWidth / 2, yPos, { align: 'center' });
+                        yPos += 20;
+                        
+                        // Draw decorative line under chapter title
+                        pdf.setDrawColor(0, 0, 0);
+                        pdf.setLineWidth(0.5);
+                        pdf.line(pageWidth / 2 - 30, yPos - 5, pageWidth / 2 + 30, yPos - 5);
+                        yPos += 10;
+                        
+                        // Written content with larger font for readability
+                        if (text) {
+                            pdf.setFont("times", "normal");
+                            pdf.setFontSize(12);
+                            const lines = pdf.splitTextToSize(text, contentWidth);
+                            
+                            lines.forEach(line => {
+                                // Check if we need a new page
+                                if (yPos > 260) {
+                                    pdf.addPage();
+                                    drawPaperTexture();
+                                    yPos = margin;
+                                }
+                                
+                                pdf.text(line, margin, yPos);
+                                yPos += lineHeight + 1;
+                            });
+                        }
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100, 100, 100);
+                        const currentPage = pdf.internal.getNumberOfPages();
+                        pdf.text(currentPage.toString(), pageWidth / 2, 280, { align: 'center' });
+                    });
+                }
+                
+                // FINAL PAGE - Colophon
+                pdf.addPage();
+                drawPaperTexture();
+                yPos = margin;
+                
+                // Title
+                pdf.setFont("times", "bolditalic");
+                pdf.setFontSize(24);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text("Colophon", pageWidth / 2, yPos, { align: 'center' });
+                yPos += 30;
+                
+                // Decorative line
+                pdf.setDrawColor(0, 0, 0);
+                pdf.setLineWidth(0.5);
+                pdf.line(pageWidth / 2 - 30, yPos - 10, pageWidth / 2 + 30, yPos - 10);
+                yPos += 10;
+                
+                // Information
+                pdf.setFont("times", "normal");
+                pdf.setFontSize(12);
+                
+                pdf.text(`This Codex was generated by Quill & Codex`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 15;
+                pdf.text(`for "${codex.metadata.title || 'Untitled Manuscript'}"`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 15;
+                pdf.text(`by ${codex.metadata.author || 'Anonymous'}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 20;
+                
+                pdf.setFontSize(10);
+                pdf.text(`Total Elements: ${codex.characters.length + codex.world.length + codex.scenes.length + codex.outline.length + codex.notes.length}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+                
+                let totalWrittenWords = 0;
+                for (const chapter in codex.writing) {
+                    const text = codex.writing[chapter] || '';
+                    totalWrittenWords += text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+                }
+                pdf.text(`Total Written Words: ${totalWrittenWords}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+                
+                pdf.text(`Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 20;
+                
+                // Final quote
+                pdf.setFont("times", "italic");
+                pdf.setFontSize(11);
+                pdf.text("Every great story begins with a plan", pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+                pdf.text("and ends with the turning of a page.", pageWidth / 2, yPos, { align: 'center' });
+                
+                // Add final page number
+                pdf.setFontSize(10);
+                pdf.setTextColor(100, 100, 100);
+                const finalPage = pdf.internal.getNumberOfPages();
+                pdf.text(finalPage.toString(), pageWidth / 2, 280, { align: 'center' });
+                
                 // Save the PDF
-                const fileName = `${codex.metadata.title.replace(/[^a-z0-9]/gi, '_') || 'novel'}_Complete_Codex.pdf`;
+                const fileName = `${codex.metadata.title.replace(/[^a-z0-9]/gi, '_') || 'novel'}_Codex.pdf`;
                 pdf.save(fileName);
-                showNotification('Complete Codex PDF generated!', 'success');
+                showNotification('Beautiful handwritten Codex PDF generated!', 'success');
             }, 1000);
         }
 
@@ -2427,16 +2702,8 @@
             }
             
             // Save to localStorage
-            const dataToSave = {
-                ...codex,
-                images: {
-                    world: worldImages,
-                    characters: characterImages
-                }
-            };
-            
             try {
-                localStorage.setItem('quillCodexData', JSON.stringify(dataToSave));
+                localStorage.setItem('quillCodexData', JSON.stringify(codex));
                 showNotification('Complete Codex saved!', 'success');
             } catch (e) {
                 showNotification('Error saving data. Try exporting as JSON instead.', 'error');
@@ -2449,10 +2716,6 @@
                 try {
                     const loadedData = JSON.parse(saved);
                     codex = loadedData;
-                    
-                    // Restore images
-                    worldImages = loadedData.images?.world || [];
-                    characterImages = loadedData.images?.characters || [];
                     
                     // Restore UI
                     document.getElementById('novelTitle').value = codex.metadata.title;
@@ -2551,9 +2814,6 @@
                     }
                 };
                 
-                worldImages = [];
-                characterImages = [];
-                
                 // Clear all form fields
                 document.getElementById('novelTitle').value = 'Untitled Manuscript';
                 document.getElementById('authorName').value = '';
@@ -2568,7 +2828,6 @@
                 document.getElementById('worldName').value = '';
                 document.getElementById('worldDescription').value = '';
                 document.getElementById('worldTags').value = '';
-                document.getElementById('worldImagePreview').innerHTML = '';
                 
                 document.getElementById('charName').value = '';
                 document.getElementById('charAppearance').value = '';
@@ -2576,7 +2835,6 @@
                 document.getElementById('charBackstory').value = '';
                 document.getElementById('charArc').value = '';
                 document.getElementById('charTags').value = '';
-                document.getElementById('charImagePreview').innerHTML = '';
                 
                 document.getElementById('sceneTitle').value = '';
                 document.getElementById('sceneCharacters').value = '';
@@ -2643,31 +2901,6 @@
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 3000);
-        }
-
-        function removeImage(type, index) {
-            if (type === 'world') {
-                worldImages.splice(index, 1);
-                updateImagePreview('worldImagePreview', worldImages.filter(img => img.category.startsWith('world-')));
-            } else if (type === 'character') {
-                characterImages.splice(index, 1);
-                updateImagePreview('charImagePreview', characterImages.filter(img => img.category.startsWith('character-')));
-            }
-        }
-
-        function updateImagePreview(containerId, images) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            
-            images.forEach((img, index) => {
-                container.innerHTML += `
-                    <div class="image-preview">
-                        <button class="remove-image" onclick="removeImage('${containerId.includes('world') ? 'world' : 'character'}', ${index})">×</button>
-                        <img src="${img.data}" alt="${img.name}">
-                        <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
-                    </div>
-                `;
-            });
         }
     </script>
 </body>
