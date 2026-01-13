@@ -3,1848 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novel Planner | Hobonichi Style</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Caveat:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>December 12th 2024 – Weekly Planner</title>
     <style>
-        :root {
-            --pastel-pink: #F8D7DA;
-            --soft-cream: #FFF9F5;
-            --light-gray: #F0F0F0;
-            --muted-charcoal: #5A5A5A;
-            --pastel-mint: #C1E1D2;
-            --pastel-lavender: #D4C4E6;
-            --pastel-peach: #FFD8BE;
-            --pastel-blue: #B5E0F9;
-            --grid-line: rgba(248, 215, 218, 0.3);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--soft-cream);
-            color: var(--muted-charcoal);
-            line-height: 1.6;
-            min-height: 100vh;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 29px, var(--grid-line) 29px, var(--grid-line) 30px);
-        }
-        
-        .container {
-            max-width: 1400px;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            padding: 20px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 250px 1fr 250px;
-            gap: 25px;
-            min-height: 100vh;
+            line-height: 1.5;
         }
-        
-        /* Header */
+
         .header {
-            grid-column: 1 / -1;
             text-align: center;
-            padding: 30px 20px;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--pastel-pink);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--pastel-pink), var(--pastel-lavender), var(--pastel-mint));
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .angel-logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--pastel-pink), var(--pastel-lavender));
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 20c10-10 30-10 40 0 5 10 5 20 0 30-5 10-20 20-40 30-20-10-35-20-40-30-5-10-5-20 0-30 10-10 30-10 40 0z'/%3E%3Cpath d='M30 40c-5 5-5 15 0 20 5 5 15 5 20 0 5 5 15 5 20 0 5-5 5-15 0-20-5-5-15-5-20 0-5-5-15-5-20 0z'/%3E%3Cpath d='M35 35l-5 15M65 35l5 15M50 20v-5M40 25h-5M60 25h5'/%3E%3C/svg%3E");
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 20c10-10 30-10 40 0 5 10 5 20 0 30-5 10-20 20-40 30-20-10-35-20-40-30-5-10-5-20 0-30 10-10 30-10 40 0z'/%3E%3Cpath d='M30 40c-5 5-5 15 0 20 5 5 15 5 20 0 5 5 15 5 20 0 5-5 5-15 0-20-5-5-15-5-20 0-5-5-15-5-20 0z'/%3E%3Cpath d='M35 35l-5 15M65 35l5 15M50 20v-5M40 25h-5M60 25h5'/%3E%3C/svg%3E");
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-position: center;
-            mask-position: center;
-            -webkit-mask-size: contain;
-            mask-size: contain;
-        }
-        
-        .title {
-            font-family: 'Dancing Script', cursive;
-            font-size: 3.5rem;
-            color: var(--pastel-pink);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .subtitle {
-            font-family: 'Caveat', cursive;
-            font-size: 1.4rem;
-            color: var(--pastel-lavender);
-            margin-top: 5px;
-        }
-        
-        /* Sidebar - Planning Tools */
-        .sidebar {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--pastel-pink);
-            height: fit-content;
-        }
-        
-        .sidebar-title {
-            font-family: 'Caveat', cursive;
-            font-size: 2rem;
-            color: var(--pastel-pink);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px dashed var(--pastel-pink);
-            text-align: center;
-        }
-        
-        .tool-item {
-            background: var(--soft-cream);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            cursor: grab;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-        }
-        
-        .tool-item:hover {
-            transform: translateX(5px);
-            border-color: var(--pastel-pink);
-            box-shadow: 0 4px 12px rgba(248, 215, 218, 0.3);
-        }
-        
-        .tool-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        
-        .icon-character { background: var(--pastel-pink); }
-        .icon-scene { background: var(--pastel-lavender); }
-        .icon-timeline { background: var(--pastel-mint); }
-        .icon-world { background: var(--pastel-peach); }
-        .icon-outline { background: var(--pastel-blue); }
-        .icon-notes { background: var(--pastel-lavender); }
-        
-        .tool-info h4 {
-            font-weight: 600;
-            color: var(--muted-charcoal);
-            margin-bottom: 4px;
-        }
-        
-        .tool-info p {
-            font-size: 0.9rem;
-            color: #999;
-        }
-        
-        /* Main Content */
-        .main-content {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            border: 1px solid var(--pastel-pink);
-            min-height: 700px;
-        }
-        
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px dashed var(--pastel-pink);
         }
-        
-        .section-title {
-            font-family: 'Caveat', cursive;
-            font-size: 2.5rem;
-            color: var(--pastel-pink);
-        }
-        
-        .page-number {
-            font-family: 'Inter', monospace;
-            color: var(--pastel-lavender);
-            font-size: 1rem;
-            background: var(--soft-cream);
-            padding: 5px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--pastel-pink);
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--pastel-pink);
-            padding-bottom: 5px;
-        }
-        
-        .tab-btn {
-            padding: 10px 20px;
-            background: transparent;
-            border: none;
-            border-radius: 10px 10px 0 0;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            color: #999;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-btn.active {
-            background: var(--pastel-pink);
-            color: white;
-        }
-        
-        .tab-btn:hover:not(.active) {
-            background: var(--soft-cream);
-            color: var(--pastel-pink);
-        }
-        
-        .tab-content {
-            display: none;
-            min-height: 500px;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Writing Area */
-        .writing-area {
-            width: 100%;
-            height: 500px;
-            padding: 20px;
-            border: 1px solid var(--pastel-pink);
-            border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.8;
-            color: var(--muted-charcoal);
-            background: var(--soft-cream);
-            resize: none;
-            outline: none;
-        }
-        
-        .writing-area::placeholder {
-            color: var(--pastel-lavender);
-            opacity: 0.7;
-        }
-        
-        /* Workspace Drop Zone */
-        .workspace-dropzone {
-            border: 3px dashed var(--pastel-pink);
-            border-radius: 15px;
-            padding: 50px 20px;
-            text-align: center;
-            color: var(--pastel-lavender);
-            margin-top: 30px;
-            transition: all 0.3s ease;
-            background: var(--soft-cream);
-        }
-        
-        .workspace-dropzone.drag-over {
-            border-color: var(--pastel-mint);
-            background: rgba(193, 225, 210, 0.1);
-        }
-        
-        .workspace-dropzone i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: var(--pastel-pink);
-        }
-        
-        /* Active Tools Container */
-        #activeToolsContainer {
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        
-        /* Tool Cards in Workspace */
-        .tool-card {
-            background: white;
-            border: 2px solid var(--pastel-pink);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(248, 215, 218, 0.3);
-        }
-        
-        .delete-tool {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--pastel-pink);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-        
-        .tool-card-title {
-            font-family: 'Caveat', cursive;
-            font-size: 1.8rem;
-            color: var(--pastel-pink);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed var(--pastel-pink);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
             margin-bottom: 5px;
-            color: var(--muted-charcoal);
-            font-weight: 500;
-            font-size: 0.9rem;
+            color: #222;
         }
-        
-        .form-input {
+
+        .header .subtitle {
+            font-size: 1rem;
+            color: #777;
+        }
+
+        .weekday-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #d0a6a6;
+        }
+
+        .weekday-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #b56576;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e0c9c9;
+        }
+
+        .event-list {
+            list-style: none;
+        }
+
+        .event-list li {
+            padding: 6px 0;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .event-day {
+            font-weight: bold;
+            color: #555;
+            min-width: 30px;
+        }
+
+        .event-text {
+            margin-left: 10px;
+            flex: 1;
+        }
+
+        .highlight {
+            background-color: #fff0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .habits-table {
             width: 100%;
-            padding: 10px 15px;
-            border: 1px solid var(--pastel-pink);
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            color: var(--muted-charcoal);
-            background: var(--soft-cream);
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--pastel-lavender);
-            box-shadow: 0 0 0 3px rgba(212, 196, 230, 0.2);
-        }
-        
-        .form-textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        .save-btn {
-            background: var(--pastel-pink);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 25px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border-collapse: collapse;
             margin-top: 10px;
         }
-        
-        .save-btn:hover {
-            background: var(--pastel-lavender);
-            transform: translateY(-2px);
+
+        .habits-table th, .habits-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.95rem;
         }
-        
-        /* Control Panel */
-        .control-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--pastel-pink);
-            height: fit-content;
-        }
-        
-        .control-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            background: var(--pastel-pink);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .control-btn:hover {
-            background: var(--pastel-lavender);
-            transform: translateY(-2px);
-        }
-        
-        .control-btn.export {
-            background: var(--pastel-mint);
-        }
-        
-        .control-btn.clear {
-            background: var(--pastel-peach);
-        }
-        
-        .stats-box {
-            background: var(--soft-cream);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 30px;
-            border: 1px solid var(--pastel-pink);
-        }
-        
-        .stats-title {
-            font-family: 'Caveat', cursive;
-            font-size: 1.5rem;
-            color: var(--pastel-pink);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--pastel-pink);
-        }
-        
-        .stat-item:last-child {
-            border-bottom: none;
-        }
-        
-        .stat-value {
+
+        .habits-table th {
+            background-color: #f2f2f2;
             font-weight: 600;
-            color: var(--pastel-lavender);
         }
-        
-        .info-box {
-            margin-top: 30px;
-        }
-        
-        .info-title {
-            font-family: 'Caveat', cursive;
-            font-size: 1.5rem;
-            color: var(--pastel-pink);
-            margin-bottom: 15px;
-        }
-        
-        /* Footer */
+
         .footer {
-            grid-column: 1 / -1;
             text-align: center;
-            padding: 25px;
             margin-top: 30px;
-            color: var(--pastel-lavender);
             font-size: 0.9rem;
-            border-top: 2px dashed var(--pastel-pink);
+            color: #888;
+            padding: 15px;
+            border-top: 1px solid #eee;
         }
-        
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--pastel-mint);
-            color: var(--muted-charcoal);
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            display: none;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
             }
-            to {
-                transform: translateX(0);
-                opacity: 1;
+            .weekday-section {
+                padding: 15px;
             }
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .container {
-                grid-template-columns: 1fr;
+            .event-list li {
+                flex-direction: column;
             }
-            
-            .sidebar, .control-panel {
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .title {
-                font-size: 2.5rem;
-            }
-            
-            .tabs {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-            }
-            
-            #activeToolsContainer {
-                grid-template-columns: 1fr;
+            .event-day {
+                margin-bottom: 3px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="dot-grid-bg"></div>
-    
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo-container">
-                <div class="angel-logo"></div>
-                <div>
-                    <h1 class="title">Novel Planner</h1>
-                    <p class="subtitle">Hobonichi Style Writing Studio</p>
-                </div>
-            </div>
-        </header>
 
-        <!-- Left Sidebar - Planning Tools -->
-        <aside class="sidebar">
-            <h2 class="sidebar-title">Planning Tools</h2>
-            
-            <div class="tool-item draggable" data-tool="character" draggable="true">
-                <div class="tool-icon icon-character">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="tool-info">
-                    <h4>Character Builder</h4>
-                    <p>Create detailed character profiles</p>
-                </div>
-            </div>
-            
-            <div class="tool-item draggable" data-tool="scene" draggable="true">
-                <div class="tool-icon icon-scene">
-                    <i class="fas fa-map"></i>
-                </div>
-                <div class="tool-info">
-                    <h4>Scene Card</h4>
-                    <p>Plan individual scenes</p>
-                </div>
-            </div>
-            
-            <div class="tool-item draggable" data-tool="timeline" draggable="true">
-                <div class="tool-icon icon-timeline">
-                    <i class="fas fa-timeline"></i>
-                </div>
-                <div class="tool-info">
-                    <h4>Plot Timeline</h4>
-                    <p>Visual timeline of events</p>
-                </div>
-            </div>
-            
-            <div class="tool-item draggable" data-tool="world" draggable="true">
-                <div class="tool-icon icon-world">
-                    <i class="fas fa-globe"></i>
-                </div>
-                <div class="tool-info">
-                    <h4>World Building</h4>
-                    <p>Create your story's world</p>
-                </div>
-            </div>
-            
-            <div class="tool-item draggable" data-tool="outline" draggable="true">
-                <div class="tool-icon icon-outline">
-                    <i class="fas fa-list-ol"></i>
-                </div>
-                <div class="tool-info">
-                    <h4>Chapter Outline</h4>
-                    <p>Structure your chapters</p>
-                </div>
-            </div>
-            
-            <div class="tool-item draggable" data-tool="notes" draggable="true">
-                <div class="tool-icon icon-notes">
-                    <i class="fas fa-sticky-note"></i>
-                </div>
-                <div class="tool-info">
-                    <h4>Writer's Notes</h4>
-                    <p>General notes and ideas</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-header">
-                <h2 class="section-title">Your Novel Workspace</h2>
-                <div class="page-number">Page <span id="currentPage">1</span></div>
-            </div>
-            
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="writing">Writing</button>
-                <button class="tab-btn" data-tab="characters">Characters</button>
-                <button class="tab-btn" data-tab="scenes">Scenes</button>
-                <button class="tab-btn" data-tab="timeline">Timeline</button>
-                <button class="tab-btn" data-tab="world">World</button>
-                <button class="tab-btn" data-tab="outline">Outline</button>
-                <button class="tab-btn" data-tab="notes">Notes</button>
-                <button class="tab-btn" data-tab="preview">Preview</button>
-            </div>
-            
-            <!-- Tab Contents -->
-            <div class="tab-content active" id="writing-tab">
-                <textarea class="writing-area" placeholder="Begin writing your story here... ✍️" id="mainWritingArea"></textarea>
-                <div style="text-align: right; margin-top: 10px; color: var(--pastel-lavender);">
-                    Word Count: <span id="wordCount">0</span>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="characters-tab">
-                <div id="charactersContainer">
-                    <!-- Characters will be added here -->
-                </div>
-                <button class="save-btn" onclick="addCharacter()" style="margin-top: 20px;">
-                    <i class="fas fa-plus"></i> Add Character
-                </button>
-            </div>
-            
-            <div class="tab-content" id="scenes-tab">
-                <div id="scenesContainer">
-                    <!-- Scenes will be added here -->
-                </div>
-                <button class="save-btn" onclick="addScene()" style="margin-top: 20px;">
-                    <i class="fas fa-plus"></i> Add Scene
-                </button>
-            </div>
-            
-            <div class="tab-content" id="timeline-tab">
-                <div id="timelineContainer">
-                    <!-- Timeline will be added here -->
-                </div>
-                <button class="save-btn" onclick="addTimelineEvent()" style="margin-top: 20px;">
-                    <i class="fas fa-plus"></i> Add Event
-                </button>
-            </div>
-            
-            <div class="tab-content" id="world-tab">
-                <div id="worldContainer">
-                    <!-- World building will be added here -->
-                </div>
-                <button class="save-btn" onclick="addWorldElement()" style="margin-top: 20px;">
-                    <i class="fas fa-plus"></i> Add World Element
-                </button>
-            </div>
-            
-            <div class="tab-content" id="outline-tab">
-                <div id="outlineContainer">
-                    <!-- Outline will be added here -->
-                </div>
-                <button class="save-btn" onclick="addChapterOutline()" style="margin-top: 20px;">
-                    <i class="fas fa-plus"></i> Add Chapter
-                </button>
-            </div>
-            
-            <div class="tab-content" id="notes-tab">
-                <div id="notesContainer">
-                    <!-- Notes will be added here -->
-                </div>
-                <button class="save-btn" onclick="addNote()" style="margin-top: 20px;">
-                    <i class="fas fa-plus"></i> Add Note
-                </button>
-            </div>
-            
-            <div class="tab-content" id="preview-tab">
-                <div id="previewContainer" style="padding: 20px; background: var(--soft-cream); border-radius: 10px; min-height: 500px;">
-                    <!-- Preview will be generated here -->
-                </div>
-                <button class="save-btn export" onclick="generatePDF()" style="margin-top: 20px; width: 100%;">
-                    <i class="fas fa-download"></i> Download Complete Novel Plan (PDF)
-                </button>
-            </div>
-            
-            <!-- Drop Zone -->
-            <div class="workspace-dropzone" id="workspaceDropzone">
-                <i class="fas fa-arrow-down"></i>
-                <h3>Drag planning tools here to add them to your workspace</h3>
-                <p style="margin-top: 10px; color: var(--pastel-lavender);">
-                    Drag any tool from the sidebar and drop here to start planning
-                </p>
-            </div>
-            
-            <!-- Active Tools Container -->
-            <div id="activeToolsContainer"></div>
-        </main>
-
-        <!-- Right Sidebar - Controls -->
-        <aside class="control-panel">
-            <h2 class="sidebar-title">Manuscript Controls</h2>
-            
-            <button class="control-btn" onclick="saveManuscript()">
-                <i class="fas fa-save"></i> Save to Browser
-            </button>
-            
-            <button class="control-btn" onclick="loadManuscript()">
-                <i class="fas fa-folder-open"></i> Load from Browser
-            </button>
-            
-            <button class="control-btn export" onclick="generatePDF()">
-                <i class="fas fa-file-pdf"></i> Export Full Plan to PDF
-            </button>
-            
-            <button class="control-btn" onclick="printManuscript()">
-                <i class="fas fa-print"></i> Print Manuscript
-            </button>
-            
-            <button class="control-btn clear" onclick="clearAll()">
-                <i class="fas fa-broom"></i> Clear All
-            </button>
-            
-            <!-- Stats -->
-            <div class="stats-box">
-                <h3 class="stats-title">Progress Stats</h3>
-                <div class="stat-item">
-                    <span>Words:</span>
-                    <span class="stat-value" id="statWords">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Characters:</span>
-                    <span class="stat-value" id="statCharacters">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Scenes:</span>
-                    <span class="stat-value" id="statScenes">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Chapters:</span>
-                    <span class="stat-value" id="statChapters">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Notes:</span>
-                    <span class="stat-value" id="statNotes">0</span>
-                </div>
-            </div>
-            
-            <!-- Manuscript Info -->
-            <div class="info-box">
-                <h3 class="info-title">Manuscript Info</h3>
-                <div class="form-group">
-                    <label for="novelTitle">Novel Title:</label>
-                    <input type="text" id="novelTitle" class="form-input" placeholder="Untitled Manuscript">
-                </div>
-                <div class="form-group">
-                    <label for="authorName">Author:</label>
-                    <input type="text" id="authorName" class="form-input" placeholder="Your Name">
-                </div>
-                <div class="form-group">
-                    <label for="genre">Genre:</label>
-                    <input type="text" id="genre" class="form-input" placeholder="Fantasy, Romance, etc.">
-                </div>
-            </div>
-        </aside>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>Novel Planner | Hobonichi Style | All data saved locally in your browser</p>
-            <p style="margin-top: 10px; font-size: 0.8rem;">
-                <i class="fas fa-heart" style="color: var(--pastel-pink);"></i>
-                Made with love for writers
-            </p>
-        </footer>
+    <div class="header">
+        <h1>DECEMBER 12th 2024</h1>
+        <p class="subtitle">Weekly Planner | Hobonichi Style</p>
     </div>
 
-    <!-- Notification -->
-    <div class="notification" id="notification"></div>
+    <!-- MONDAY -->
+    <div class="weekday-section">
+        <h2 class="weekday-title">MONDAY</h2>
+        <ul class="event-list">
+            <li><span class="event-day">9</span><span class="event-text"><span class="highlight">Holiday Baking Championship</span><br>Aiea's Birthday!</span></li>
+            <li><span class="event-day">10</span><span class="event-text"><span class="highlight">Alexa's Birthday!</span></span></li>
+            <li><span class="event-day">11</span><span class="event-text">Bad Sisters</span></li>
+            <li><span class="event-day">12</span><span class="event-text">wizards of Bazing<br>Sex Lives of College Girls</span></li>
+            <li><span class="event-day">13</span><span class="event-text">Chris Rock and Gracie Abrams</span></li>
+            <li><span class="event-day">14</span><span class="event-text">SNL!<br>Chris Rock and Gracie Abrams</span></li>
+            <li><span class="event-day">15</span><span class="event-text">BUF vs. DET<br>Amazons deliver</span></li>
+        </ul>
+    </div>
 
-    <script>
-        // State management
-        let manuscript = {
-            writing: '',
-            characters: [],
-            scenes: [],
-            timeline: [],
-            worldbuilding: [],
-            outlines: [],
-            notes: [],
-            title: 'Untitled Manuscript',
-            author: '',
-            genre: ''
-        };
+    <!-- TUESDAY -->
+    <div class="weekday-section">
+        <h2 class="weekday-title">TUESDAY</h2>
+        <ul class="event-list">
+            <li><span class="event-day">16</span><span class="event-text"><span class="highlight">Week 44</span><br>At Weekly Recap<br>Clean Room + organize Desk</span></li>
+            <li><span class="event-day">17</span><span class="event-text">Make Breakfast<br>Lego Wreath!</span></li>
+            <li><span class="event-day">18</span><span class="event-text">Journallas</span></li>
+        </ul>
+    </div>
 
-        // DOM elements
-        const writingArea = document.getElementById('mainWritingArea');
-        const workspaceDropzone = document.getElementById('workspaceDropzone');
-        const activeToolsContainer = document.getElementById('activeToolsContainer');
-        const notification = document.getElementById('notification');
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
+    <!-- WEDNESDAY -->
+    <div class="weekday-section">
+        <h2 class="weekday-title">WEDNESDAY</h2>
+        <ul class="event-list">
+            <li><span class="event-day">19</span><span class="event-text">Movie Night! That Christmas<br>Journallas<br>Finish Lego<br>Make Dinner</span></li>
+            <li><span class="event-day">20</span><span class="event-text">Foxtail Coffee<br>Einstein Bagels<br>Cousin Jan. Monthly<br>Weeks Catch-up</span></li>
+            <li><span class="event-day">21</span><span class="event-text">Book Journal<br>YouTube Catch-up</span></li>
+            <li><span class="event-day">22</span><span class="event-text">Temp. Quilt Catch-up</span></li>
+            <li><span class="event-day">23</span><span class="event-text">Clean Kitchen<br>Temp. Quilt Catch-up</span></li>
+            <li><span class="event-day">24</span><span class="event-text">Weekly Reset</span></li>
+        </ul>
+    </div>
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFromStorage();
-            setupDragAndDrop();
-            setupTabs();
-            setupEventListeners();
-            updateStats();
-            
-            // Auto-save every 30 seconds
-            setInterval(saveManuscript, 30000);
-        });
+    <!-- THURSDAY -->
+    <div class="weekday-section">
+        <h2 class="weekday-title">THURSDAY</h2>
+        <ul class="event-list">
+            <li><span class="event-day">25</span><span class="event-text"><span class="highlight">Christmas</span><br>Journallas<br>Finish Lego<br>Make Dinner</span></li>
+            <li><span class="event-day">26</span><span class="event-text">Foxtail Coffee<br>Einstein Bagels<br>Cousin Jan. Monthly<br>Weeks Catch-up</span></li>
+            <li><span class="event-day">27</span><span class="event-text">Book Journal<br>YouTube Catch-up</span></li>
+            <li><span class="event-day">28</span><span class="event-text">Temp. Quilt Catch-up</span></li>
+            <li><span class="event-day">29</span><span class="event-text">Clean Kitchen<br>Temp. Quilt Catch-up</span></li>
+            <li><span class="event-day">30</span><span class="event-text">Weekly Reset</span></li>
+        </ul>
+    </div>
 
-        // Setup tabs
-        function setupTabs() {
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === `${tabId}-tab`) {
-                            content.classList.add('active');
-                        }
-                    });
-                    
-                    if (tabId === 'preview') {
-                        generatePreview();
-                    }
-                });
-            });
-        }
+    <!-- FRIDAY -->
+    <div class="weekday-section">
+        <h2 class="weekday-title">FRIDAY</h2>
+        <ul class="event-list">
+            <li><span class="event-day">31</span>
+                <span class="event-text">
+                    <strong>Daily Habits</strong><br>
+                    <table class="habits-table">
+                        <tr><th>MTWTFS</th></tr>
+                        <tr><td>Brush Teeth</td></tr>
+                        <tr><td>Floss</td></tr>
+                        <tr><td>Make Bed</td></tr>
+                        <tr><td>Go Outside</td></tr>
+                        <tr><td>Photo Declutter</td></tr>
+                        <tr><td>Journal</td></tr>
+                        <tr><td>Read</td></tr>
+                        <tr><td>Instagram</td></tr>
+                        <tr><td>Temp. Quilt</td></tr>
+                    </table>
+                </span>
+            </li>
+            <li><span class="event-day">32</span><span class="event-text"><strong>Water Tracker</strong><br>M T W T F S</span></li>
+            <li><span class="event-day">33</span><span class="event-text"><strong>Dinners</strong><br>
+                Korean Short Ribs<br>
+                Pork Carnitas Tacos<br>
+                Italian Takeout<br>
+                Chili & Cornbread<br>
+                Chicken Caesar Wrap<br>
+                Huey Magoo's NY Strip
+            </span></li>
+        </ul>
+    </div>
 
-        // Setup event listeners
-        function setupEventListeners() {
-            writingArea.addEventListener('input', function() {
-                manuscript.writing = this.value;
-                updateStats();
-            });
-            
-            document.getElementById('novelTitle').addEventListener('input', function() {
-                manuscript.title = this.value;
-            });
-            
-            document.getElementById('authorName').addEventListener('input', function() {
-                manuscript.author = this.value;
-            });
-            
-            document.getElementById('genre').addEventListener('input', function() {
-                manuscript.genre = this.value;
-            });
-        }
+    <!-- SATURDAY -->
+    <div class="weekday-section">
+        <h2 class="weekday-title">SATURDAY</h2>
+        <ul class="event-list">
+            <li><span class="event-day">34</span><span class="event-text"><strong>Holiday Season</strong><br>An Hour on Style with Chaco from Paris</span></li>
+        </ul>
+    </div>
 
-        // Setup drag and drop
-        function setupDragAndDrop() {
-            const draggables = document.querySelectorAll('.draggable');
-            
-            draggables.forEach(item => {
-                item.addEventListener('dragstart', function(e) {
-                    e.dataTransfer.setData('text/plain', this.getAttribute('data-tool'));
-                    this.style.opacity = '0.5';
-                });
-                
-                item.addEventListener('dragend', function() {
-                    this.style.opacity = '1';
-                });
-            });
-            
-            workspaceDropzone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('drag-over');
-            });
-            
-            workspaceDropzone.addEventListener('dragleave', function() {
-                this.classList.remove('drag-over');
-            });
-            
-            workspaceDropzone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('drag-over');
-                
-                const toolType = e.dataTransfer.getData('text/plain');
-                addToolToWorkspace(toolType);
-            });
-        }
+    <div class="footer">
+        <p>Planner styled in Hobonichi aesthetic | Functional layout only</p>
+    </div>
 
-        // Add tool to workspace
-        function addToolToWorkspace(toolType) {
-            const toolId = Date.now();
-            let toolHTML = '';
-            
-            switch(toolType) {
-                case 'character':
-                    toolHTML = `
-                        <div class="tool-card" id="tool-${toolId}">
-                            <button class="delete-tool" onclick="removeTool(${toolId})">×</button>
-                            <h3 class="tool-card-title">Character Builder</h3>
-                            <div class="form-group">
-                                <label>Name:</label>
-                                <input type="text" class="form-input" id="char-name-${toolId}" placeholder="Character Name">
-                            </div>
-                            <div class="form-group">
-                                <label>Role:</label>
-                                <select class="form-input" id="char-role-${toolId}">
-                                    <option value="">Select Role</option>
-                                    <option value="protagonist">Protagonist</option>
-                                    <option value="antagonist">Antagonist</option>
-                                    <option value="supporting">Supporting</option>
-                                    <option value="minor">Minor</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Age:</label>
-                                <input type="text" class="form-input" id="char-age-${toolId}" placeholder="Character Age">
-                            </div>
-                            <div class="form-group">
-                                <label>Description:</label>
-                                <textarea class="form-input form-textarea" id="char-desc-${toolId}" placeholder="Physical appearance, personality..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Backstory:</label>
-                                <textarea class="form-input form-textarea" id="char-story-${toolId}" placeholder="Character's history..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Motivation:</label>
-                                <input type="text" class="form-input" id="char-motivation-${toolId}" placeholder="What drives this character?">
-                            </div>
-                            <button class="save-btn" onclick="saveCharacter(${toolId})">
-                                <i class="fas fa-save"></i> Save Character
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'scene':
-                    toolHTML = `
-                        <div class="tool-card" id="tool-${toolId}">
-                            <button class="delete-tool" onclick="removeTool(${toolId})">×</button>
-                            <h3 class="tool-card-title">Scene Card</h3>
-                            <div class="form-group">
-                                <label>Scene Title:</label>
-                                <input type="text" class="form-input" id="scene-title-${toolId}" placeholder="Scene Title">
-                            </div>
-                            <div class="form-group">
-                                <label>Chapter:</label>
-                                <input type="text" class="form-input" id="scene-chapter-${toolId}" placeholder="Chapter Number">
-                            </div>
-                            <div class="form-group">
-                                <label>Location:</label>
-                                <input type="text" class="form-input" id="scene-location-${toolId}" placeholder="Where does this happen?">
-                            </div>
-                            <div class="form-group">
-                                <label>Characters:</label>
-                                <input type="text" class="form-input" id="scene-characters-${toolId}" placeholder="Which characters appear?">
-                            </div>
-                            <div class="form-group">
-                                <label>Purpose:</label>
-                                <input type="text" class="form-input" id="scene-purpose-${toolId}" placeholder="What's the scene's purpose?">
-                            </div>
-                            <div class="form-group">
-                                <label>Summary:</label>
-                                <textarea class="form-input form-textarea" id="scene-summary-${toolId}" placeholder="What happens in this scene?"></textarea>
-                            </div>
-                            <button class="save-btn" onclick="saveScene(${toolId})">
-                                <i class="fas fa-save"></i> Save Scene
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'timeline':
-                    toolHTML = `
-                        <div class="tool-card" id="tool-${toolId}">
-                            <button class="delete-tool" onclick="removeTool(${toolId})">×</button>
-                            <h3 class="tool-card-title">Plot Timeline</h3>
-                            <div class="form-group">
-                                <label>Event Name:</label>
-                                <input type="text" class="form-input" id="timeline-event-${toolId}" placeholder="Major plot event">
-                            </div>
-                            <div class="form-group">
-                                <label>Chapter:</label>
-                                <input type="text" class="form-input" id="timeline-chapter-${toolId}" placeholder="Chapter number">
-                            </div>
-                            <div class="form-group">
-                                <label>Position:</label>
-                                <select class="form-input" id="timeline-position-${toolId}">
-                                    <option value="beginning">Beginning</option>
-                                    <option value="middle">Middle</option>
-                                    <option value="end">End</option>
-                                    <option value="climax">Climax</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Description:</label>
-                                <textarea class="form-input form-textarea" id="timeline-desc-${toolId}" placeholder="Event details"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Impact:</label>
-                                <textarea class="form-input form-textarea" id="timeline-impact-${toolId}" placeholder="How does this affect the story?"></textarea>
-                            </div>
-                            <button class="save-btn" onclick="saveTimeline(${toolId})">
-                                <i class="fas fa-save"></i> Save Event
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'world':
-                    toolHTML = `
-                        <div class="tool-card" id="tool-${toolId}">
-                            <button class="delete-tool" onclick="removeTool(${toolId})">×</button>
-                            <h3 class="tool-card-title">World Building</h3>
-                            <div class="form-group">
-                                <label>Category:</label>
-                                <select class="form-input" id="world-category-${toolId}">
-                                    <option value="location">Location</option>
-                                    <option value="culture">Culture</option>
-                                    <option value="magic">Magic System</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="religion">Religion</option>
-                                    <option value="politics">Politics</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Name:</label>
-                                <input type="text" class="form-input" id="world-name-${toolId}" placeholder="Kingdom/Culture/System Name">
-                            </div>
-                            <div class="form-group">
-                                <label>Key Features:</label>
-                                <textarea class="form-input form-textarea" id="world-features-${toolId}" placeholder="Key features and characteristics..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Description:</label>
-                                <textarea class="form-input form-textarea" id="world-desc-${toolId}" placeholder="Detailed description..."></textarea>
-                            </div>
-                            <button class="save-btn" onclick="saveWorld(${toolId})">
-                                <i class="fas fa-save"></i> Save World Element
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'outline':
-                    toolHTML = `
-                        <div class="tool-card" id="tool-${toolId}">
-                            <button class="delete-tool" onclick="removeTool(${toolId})">×</button>
-                            <h3 class="tool-card-title">Chapter Outline</h3>
-                            <div class="form-group">
-                                <label>Chapter Number:</label>
-                                <input type="text" class="form-input" id="outline-chapter-${toolId}" placeholder="Chapter 1">
-                            </div>
-                            <div class="form-group">
-                                <label>Chapter Title:</label>
-                                <input type="text" class="form-input" id="outline-title-${toolId}" placeholder="Chapter Title">
-                            </div>
-                            <div class="form-group">
-                                <label>POV Character:</label>
-                                <input type="text" class="form-input" id="outline-pov-${toolId}" placeholder="Whose perspective?">
-                            </div>
-                            <div class="form-group">
-                                <label>Location:</label>
-                                <input type="text" class="form-input" id="outline-location-${toolId}" placeholder="Where does this happen?">
-                            </div>
-                            <div class="form-group">
-                                <label>Summary:</label>
-                                <textarea class="form-input form-textarea" id="outline-summary-${toolId}" placeholder="What happens in this chapter?"></textarea>
-                            </div>
-                            <button class="save-btn" onclick="saveOutline(${toolId})">
-                                <i class="fas fa-save"></i> Save Chapter
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'notes':
-                    toolHTML = `
-                        <div class="tool-card" id="tool-${toolId}">
-                            <button class="delete-tool" onclick="removeTool(${toolId})">×</button>
-                            <h3 class="tool-card-title">Writer's Notes</h3>
-                            <div class="form-group">
-                                <label>Note Type:</label>
-                                <select class="form-input" id="note-type-${toolId}">
-                                    <option value="idea">Story Idea</option>
-                                    <option value="dialogue">Dialogue</option>
-                                    <option value="character">Character Idea</option>
-                                    <option value="plot">Plot Idea</option>
-                                    <option value="world">World Idea</option>
-                                    <option value="research">Research</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Title:</label>
-                                <input type="text" class="form-input" id="note-title-${toolId}" placeholder="Note Title">
-                            </div>
-                            <div class="form-group">
-                                <label>Content:</label>
-                                <textarea class="form-input form-textarea" id="note-content-${toolId}" placeholder="Your notes..."></textarea>
-                            </div>
-                            <button class="save-btn" onclick="saveNote(${toolId})">
-                                <i class="fas fa-save"></i> Save Note
-                            </button>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            activeToolsContainer.insertAdjacentHTML('beforeend', toolHTML);
-            showNotification(`${toolType.replace('-', ' ')} tool added to workspace`, 'success');
-        }
-
-        // Remove tool from workspace
-        function removeTool(toolId) {
-            const tool = document.getElementById(`tool-${toolId}`);
-            if (tool) tool.remove();
-        }
-
-        // Save functions for each tool type
-        function saveCharacter(toolId) {
-            const character = {
-                id: toolId,
-                name: document.getElementById(`char-name-${toolId}`).value,
-                role: document.getElementById(`char-role-${toolId}`).value,
-                age: document.getElementById(`char-age-${toolId}`).value,
-                description: document.getElementById(`char-desc-${toolId}`).value,
-                backstory: document.getElementById(`char-story-${toolId}`).value,
-                motivation: document.getElementById(`char-motivation-${toolId}`).value
-            };
-            
-            manuscript.characters.push(character);
-            updateCharacterTab();
-            showNotification('Character saved successfully!', 'success');
-            updateStats();
-        }
-
-        function saveScene(toolId) {
-            const scene = {
-                id: toolId,
-                title: document.getElementById(`scene-title-${toolId}`).value,
-                chapter: document.getElementById(`scene-chapter-${toolId}`).value,
-                location: document.getElementById(`scene-location-${toolId}`).value,
-                characters: document.getElementById(`scene-characters-${toolId}`).value,
-                purpose: document.getElementById(`scene-purpose-${toolId}`).value,
-                summary: document.getElementById(`scene-summary-${toolId}`).value
-            };
-            
-            manuscript.scenes.push(scene);
-            updateSceneTab();
-            showNotification('Scene saved successfully!', 'success');
-            updateStats();
-        }
-
-        function saveTimeline(toolId) {
-            const event = {
-                id: toolId,
-                name: document.getElementById(`timeline-event-${toolId}`).value,
-                chapter: document.getElementById(`timeline-chapter-${toolId}`).value,
-                position: document.getElementById(`timeline-position-${toolId}`).value,
-                description: document.getElementById(`timeline-desc-${toolId}`).value,
-                impact: document.getElementById(`timeline-impact-${toolId}`).value
-            };
-            
-            manuscript.timeline.push(event);
-            updateTimelineTab();
-            showNotification('Timeline event saved!', 'success');
-        }
-
-        function saveWorld(toolId) {
-            const world = {
-                id: toolId,
-                category: document.getElementById(`world-category-${toolId}`).value,
-                name: document.getElementById(`world-name-${toolId}`).value,
-                features: document.getElementById(`world-features-${toolId}`).value,
-                description: document.getElementById(`world-desc-${toolId}`).value
-            };
-            
-            manuscript.worldbuilding.push(world);
-            updateWorldTab();
-            showNotification('World element saved!', 'success');
-        }
-
-        function saveOutline(toolId) {
-            const outline = {
-                id: toolId,
-                chapter: document.getElementById(`outline-chapter-${toolId}`).value,
-                title: document.getElementById(`outline-title-${toolId}`).value,
-                pov: document.getElementById(`outline-pov-${toolId}`).value,
-                location: document.getElementById(`outline-location-${toolId}`).value,
-                summary: document.getElementById(`outline-summary-${toolId}`).value
-            };
-            
-            manuscript.outlines.push(outline);
-            updateOutlineTab();
-            showNotification('Chapter outline saved!', 'success');
-            updateStats();
-        }
-
-        function saveNote(toolId) {
-            const note = {
-                id: toolId,
-                type: document.getElementById(`note-type-${toolId}`).value,
-                title: document.getElementById(`note-title-${toolId}`).value,
-                content: document.getElementById(`note-content-${toolId}`).value
-            };
-            
-            manuscript.notes.push(note);
-            updateNoteTab();
-            showNotification('Note saved!', 'success');
-            updateStats();
-        }
-
-        // Tab update functions
-        function updateCharacterTab() {
-            const container = document.getElementById('charactersContainer');
-            container.innerHTML = '';
-            
-            manuscript.characters.forEach(char => {
-                const charHTML = `
-                    <div class="tool-card" style="margin-bottom: 20px;">
-                        <h3 class="tool-card-title">${char.name}</h3>
-                        <div class="form-group">
-                            <label>Role:</label>
-                            <p>${char.role || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Age:</label>
-                            <p>${char.age || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Description:</label>
-                            <p>${char.description || 'No description'}</p>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', charHTML);
-            });
-        }
-
-        function updateSceneTab() {
-            const container = document.getElementById('scenesContainer');
-            container.innerHTML = '';
-            
-            manuscript.scenes.forEach(scene => {
-                const sceneHTML = `
-                    <div class="tool-card" style="margin-bottom: 20px;">
-                        <h3 class="tool-card-title">${scene.title}</h3>
-                        <div class="form-group">
-                            <label>Chapter:</label>
-                            <p>${scene.chapter || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Location:</label>
-                            <p>${scene.location || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Purpose:</label>
-                            <p>${scene.purpose || 'Not specified'}</p>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', sceneHTML);
-            });
-        }
-
-        function updateTimelineTab() {
-            const container = document.getElementById('timelineContainer');
-            container.innerHTML = '';
-            
-            // Sort by chapter
-            const sorted = [...manuscript.timeline].sort((a, b) => {
-                return (parseInt(a.chapter) || 0) - (parseInt(b.chapter) || 0);
-            });
-            
-            sorted.forEach(event => {
-                const eventHTML = `
-                    <div class="tool-card" style="margin-bottom: 20px; border-left: 4px solid var(--pastel-mint);">
-                        <h3 class="tool-card-title">${event.name}</h3>
-                        <div class="form-group">
-                            <label>Chapter:</label>
-                            <p>${event.chapter || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Position:</label>
-                            <p>${event.position}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Description:</label>
-                            <p>${event.description || 'No description'}</p>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', eventHTML);
-            });
-        }
-
-        function updateWorldTab() {
-            const container = document.getElementById('worldContainer');
-            container.innerHTML = '';
-            
-            manuscript.worldbuilding.forEach(world => {
-                const worldHTML = `
-                    <div class="tool-card" style="margin-bottom: 20px; border-left: 4px solid var(--pastel-peach);">
-                        <h3 class="tool-card-title">${world.name}</h3>
-                        <div class="form-group">
-                            <label>Category:</label>
-                            <p>${world.category}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Features:</label>
-                            <p>${world.features || 'No features specified'}</p>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', worldHTML);
-            });
-        }
-
-        function updateOutlineTab() {
-            const container = document.getElementById('outlineContainer');
-            container.innerHTML = '';
-            
-            // Sort by chapter number
-            const sorted = [...manuscript.outlines].sort((a, b) => {
-                const aNum = parseInt(a.chapter.replace(/\D/g, '')) || 0;
-                const bNum = parseInt(b.chapter.replace(/\D/g, '')) || 0;
-                return aNum - bNum;
-            });
-            
-            sorted.forEach(outline => {
-                const outlineHTML = `
-                    <div class="tool-card" style="margin-bottom: 20px; border-left: 4px solid var(--pastel-blue);">
-                        <h3 class="tool-card-title">${outline.chapter}: ${outline.title}</h3>
-                        <div class="form-group">
-                            <label>POV:</label>
-                            <p>${outline.pov || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Location:</label>
-                            <p>${outline.location || 'Not specified'}</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Summary:</label>
-                            <p>${outline.summary || 'No summary'}</p>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', outlineHTML);
-            });
-        }
-
-        function updateNoteTab() {
-            const container = document.getElementById('notesContainer');
-            container.innerHTML = '';
-            
-            manuscript.notes.forEach(note => {
-                const noteHTML = `
-                    <div class="tool-card" style="margin-bottom: 20px; border-left: 4px solid var(--pastel-lavender);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <h3 class="tool-card-title">${note.title}</h3>
-                            <span style="background: var(--pastel-lavender); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
-                                ${note.type}
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <p>${note.content || 'No content'}</p>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', noteHTML);
-            });
-        }
-
-        // Add functions for tab buttons
-        function addCharacter() {
-            const charId = Date.now();
-            const charHTML = `
-                <div class="tool-card" id="char-${charId}">
-                    <h3 class="tool-card-title">New Character</h3>
-                    <div class="form-group">
-                        <label>Name:</label>
-                        <input type="text" class="form-input" id="char-name-tab-${charId}" placeholder="Character Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Role:</label>
-                        <select class="form-input" id="char-role-tab-${charId}">
-                            <option value="">Select Role</option>
-                            <option value="protagonist">Protagonist</option>
-                            <option value="antagonist">Antagonist</option>
-                            <option value="supporting">Supporting</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Description:</label>
-                        <textarea class="form-input form-textarea" id="char-desc-tab-${charId}" placeholder="Physical appearance, personality..."></textarea>
-                    </div>
-                    <button class="save-btn" onclick="saveCharacterTab(${charId})">
-                        <i class="fas fa-save"></i> Save Character
-                    </button>
-                </div>
-            `;
-            document.getElementById('charactersContainer').insertAdjacentHTML('beforeend', charHTML);
-        }
-
-        function saveCharacterTab(charId) {
-            const character = {
-                id: charId,
-                name: document.getElementById(`char-name-tab-${charId}`).value,
-                role: document.getElementById(`char-role-tab-${charId}`).value,
-                description: document.getElementById(`char-desc-tab-${charId}`).value
-            };
-            
-            manuscript.characters.push(character);
-            updateCharacterTab();
-            showNotification('Character saved!', 'success');
-            updateStats();
-        }
-
-        function addScene() {
-            const sceneId = Date.now();
-            const sceneHTML = `
-                <div class="tool-card" id="scene-${sceneId}">
-                    <h3 class="tool-card-title">New Scene</h3>
-                    <div class="form-group">
-                        <label>Scene Title:</label>
-                        <input type="text" class="form-input" id="scene-title-tab-${sceneId}" placeholder="Scene Title">
-                    </div>
-                    <div class="form-group">
-                        <label>Chapter:</label>
-                        <input type="text" class="form-input" id="scene-chapter-tab-${sceneId}" placeholder="Chapter Number">
-                    </div>
-                    <div class="form-group">
-                        <label>Summary:</label>
-                        <textarea class="form-input form-textarea" id="scene-summary-tab-${sceneId}" placeholder="What happens in this scene?"></textarea>
-                    </div>
-                    <button class="save-btn" onclick="saveSceneTab(${sceneId})">
-                        <i class="fas fa-save"></i> Save Scene
-                    </button>
-                </div>
-            `;
-            document.getElementById('scenesContainer').insertAdjacentHTML('beforeend', sceneHTML);
-        }
-
-        function saveSceneTab(sceneId) {
-            const scene = {
-                id: sceneId,
-                title: document.getElementById(`scene-title-tab-${sceneId}`).value,
-                chapter: document.getElementById(`scene-chapter-tab-${sceneId}`).value,
-                summary: document.getElementById(`scene-summary-tab-${sceneId}`).value
-            };
-            
-            manuscript.scenes.push(scene);
-            updateSceneTab();
-            showNotification('Scene saved!', 'success');
-            updateStats();
-        }
-
-        function addTimelineEvent() {
-            const eventId = Date.now();
-            const eventHTML = `
-                <div class="tool-card" id="event-${eventId}">
-                    <h3 class="tool-card-title">New Timeline Event</h3>
-                    <div class="form-group">
-                        <label>Event Name:</label>
-                        <input type="text" class="form-input" id="event-name-tab-${eventId}" placeholder="Major plot event">
-                    </div>
-                    <div class="form-group">
-                        <label>Chapter:</label>
-                        <input type="text" class="form-input" id="event-chapter-tab-${eventId}" placeholder="Chapter number">
-                    </div>
-                    <div class="form-group">
-                        <label>Description:</label>
-                        <textarea class="form-input form-textarea" id="event-desc-tab-${eventId}" placeholder="Event details"></textarea>
-                    </div>
-                    <button class="save-btn" onclick="saveTimelineTab(${eventId})">
-                        <i class="fas fa-save"></i> Save Event
-                    </button>
-                </div>
-            `;
-            document.getElementById('timelineContainer').insertAdjacentHTML('beforeend', eventHTML);
-        }
-
-        function saveTimelineTab(eventId) {
-            const event = {
-                id: eventId,
-                name: document.getElementById(`event-name-tab-${eventId}`).value,
-                chapter: document.getElementById(`event-chapter-tab-${eventId}`).value,
-                description: document.getElementById(`event-desc-tab-${eventId}`).value
-            };
-            
-            manuscript.timeline.push(event);
-            updateTimelineTab();
-            showNotification('Timeline event saved!', 'success');
-        }
-
-        function addWorldElement() {
-            const worldId = Date.now();
-            const worldHTML = `
-                <div class="tool-card" id="world-${worldId}">
-                    <h3 class="tool-card-title">New World Element</h3>
-                    <div class="form-group">
-                        <label>Name:</label>
-                        <input type="text" class="form-input" id="world-name-tab-${worldId}" placeholder="Kingdom/Culture/System Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Category:</label>
-                        <select class="form-input" id="world-category-tab-${worldId}">
-                            <option value="location">Location</option>
-                            <option value="culture">Culture</option>
-                            <option value="magic">Magic System</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Description:</label>
-                        <textarea class="form-input form-textarea" id="world-desc-tab-${worldId}" placeholder="Detailed description..."></textarea>
-                    </div>
-                    <button class="save-btn" onclick="saveWorldTab(${worldId})">
-                        <i class="fas fa-save"></i> Save World Element
-                    </button>
-                </div>
-            `;
-            document.getElementById('worldContainer').insertAdjacentHTML('beforeend', worldHTML);
-        }
-
-        function saveWorldTab(worldId) {
-            const world = {
-                id: worldId,
-                name: document.getElementById(`world-name-tab-${worldId}`).value,
-                category: document.getElementById(`world-category-tab-${worldId}`).value,
-                description: document.getElementById(`world-desc-tab-${worldId}`).value
-            };
-            
-            manuscript.worldbuilding.push(world);
-            updateWorldTab();
-            showNotification('World element saved!', 'success');
-        }
-
-        function addChapterOutline() {
-            const outlineId = Date.now();
-            const outlineHTML = `
-                <div class="tool-card" id="outline-${outlineId}">
-                    <h3 class="tool-card-title">New Chapter</h3>
-                    <div class="form-group">
-                        <label>Chapter Number:</label>
-                        <input type="text" class="form-input" id="outline-chapter-tab-${outlineId}" placeholder="Chapter 1">
-                    </div>
-                    <div class="form-group">
-                        <label>Chapter Title:</label>
-                        <input type="text" class="form-input" id="outline-title-tab-${outlineId}" placeholder="Chapter Title">
-                    </div>
-                    <div class="form-group">
-                        <label>Summary:</label>
-                        <textarea class="form-input form-textarea" id="outline-summary-tab-${outlineId}" placeholder="What happens in this chapter?"></textarea>
-                    </div>
-                    <button class="save-btn" onclick="saveOutlineTab(${outlineId})">
-                        <i class="fas fa-save"></i> Save Chapter
-                    </button>
-                </div>
-            `;
-            document.getElementById('outlineContainer').insertAdjacentHTML('beforeend', outlineHTML);
-        }
-
-        function saveOutlineTab(outlineId) {
-            const outline = {
-                id: outlineId,
-                chapter: document.getElementById(`outline-chapter-tab-${outlineId}`).value,
-                title: document.getElementById(`outline-title-tab-${outlineId}`).value,
-                summary: document.getElementById(`outline-summary-tab-${outlineId}`).value
-            };
-            
-            manuscript.outlines.push(outline);
-            updateOutlineTab();
-            showNotification('Chapter outline saved!', 'success');
-            updateStats();
-        }
-
-        function addNote() {
-            const noteId = Date.now();
-            const noteHTML = `
-                <div class="tool-card" id="note-${noteId}">
-                    <h3 class="tool-card-title">New Note</h3>
-                    <div class="form-group">
-                        <label>Title:</label>
-                        <input type="text" class="form-input" id="note-title-tab-${noteId}" placeholder="Note Title">
-                    </div>
-                    <div class="form-group">
-                        <label>Content:</label>
-                        <textarea class="form-input form-textarea" id="note-content-tab-${noteId}" placeholder="Your notes..."></textarea>
-                    </div>
-                    <button class="save-btn" onclick="saveNoteTab(${noteId})">
-                        <i class="fas fa-save"></i> Save Note
-                    </button>
-                </div>
-            `;
-            document.getElementById('notesContainer').insertAdjacentHTML('beforeend', noteHTML);
-        }
-
-        function saveNoteTab(noteId) {
-            const note = {
-                id: noteId,
-                title: document.getElementById(`note-title-tab-${noteId}`).value,
-                content: document.getElementById(`note-content-tab-${noteId}`).value
-            };
-            
-            manuscript.notes.push(note);
-            updateNoteTab();
-            showNotification('Note saved!', 'success');
-            updateStats();
-        }
-
-        // Update stats
-        function updateStats() {
-            const words = writingArea.value.trim() === '' ? 0 : writingArea.value.trim().split(/\s+/).length;
-            
-            document.getElementById('statWords').textContent = words;
-            document.getElementById('wordCount').textContent = words;
-            document.getElementById('statCharacters').textContent = manuscript.characters.length;
-            document.getElementById('statScenes').textContent = manuscript.scenes.length;
-            document.getElementById('statChapters').textContent = manuscript.outlines.length;
-            document.getElementById('statNotes').textContent = manuscript.notes.length;
-        }
-
-        // Generate preview
-        function generatePreview() {
-            const container = document.getElementById('previewContainer');
-            const title = manuscript.title || 'Untitled Manuscript';
-            const author = manuscript.author || 'Anonymous';
-            const genre = manuscript.genre || '';
-            
-            let previewHTML = `
-                <div style="padding: 30px; background: white; border-radius: 10px; border: 2px solid var(--pastel-pink);">
-                    <h1 style="text-align: center; color: var(--pastel-pink); font-family: 'Caveat', cursive; font-size: 2.5rem; margin-bottom: 10px;">
-                        ${title}
-                    </h1>
-                    ${author ? `<p style="text-align: center; color: var(--pastel-lavender); font-size: 1.2rem; margin-bottom: 20px;">by ${author}</p>` : ''}
-                    ${genre ? `<p style="text-align: center; color: var(--pastel-mint); margin-bottom: 30px;">Genre: ${genre}</p>` : ''}
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                        <div style="text-align: center; padding: 15px; background: var(--soft-cream); border-radius: 8px;">
-                            <div style="font-size: 2rem; color: var(--pastel-pink);">${manuscript.characters.length}</div>
-                            <div style="color: var(--muted-charcoal);">Characters</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: var(--soft-cream); border-radius: 8px;">
-                            <div style="font-size: 2rem; color: var(--pastel-lavender);">${manuscript.outlines.length}</div>
-                            <div style="color: var(--muted-charcoal);">Chapters</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: var(--soft-cream); border-radius: 8px;">
-                            <div style="font-size: 2rem; color: var(--pastel-mint);">${manuscript.scenes.length}</div>
-                            <div style="color: var(--muted-charcoal);">Scenes</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: var(--soft-cream); border-radius: 8px;">
-                            <div style="font-size: 2rem; color: var(--pastel-peach);">${manuscript.notes.length}</div>
-                            <div style="color: var(--muted-charcoal);">Notes</div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed var(--pastel-pink);">
-                        <h3 style="color: var(--pastel-pink); font-family: 'Caveat', cursive; font-size: 1.8rem; margin-bottom: 15px;">Preview</h3>
-                        <p style="color: var(--muted-charcoal); line-height: 1.8;">
-                            Your complete novel plan includes ${manuscript.characters.length} characters, 
-                            ${manuscript.outlines.length} chapters, ${manuscript.scenes.length} scenes, 
-                            and ${manuscript.notes.length} notes. Click "Download Complete Novel Plan (PDF)" 
-                            to export everything in a beautifully formatted document.
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            container.innerHTML = previewHTML;
-        }
-
-        // Generate PDF
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            const title = manuscript.title || 'Untitled Manuscript';
-            const author = manuscript.author || 'Anonymous Writer';
-            
-            pdf.setFontSize(24);
-            pdf.setTextColor(248, 215, 218); // Pastel pink
-            pdf.text(title, 105, 30, { align: 'center' });
-            
-            pdf.setFontSize(16);
-            pdf.setTextColor(212, 196, 230); // Pastel lavender
-            pdf.text(`by ${author}`, 105, 40, { align: 'center' });
-            
-            pdf.setFontSize(12);
-            pdf.setTextColor(90, 90, 90); // Muted charcoal
-            pdf.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 50, { align: 'center' });
-            
-            pdf.setFontSize(14);
-            pdf.setTextColor(193, 225, 210); // Pastel mint
-            pdf.text('Novel Planning Summary', 20, 70);
-            
-            pdf.setFontSize(11);
-            pdf.setTextColor(0, 0, 0);
-            
-            let y = 80;
-            pdf.text(`• Characters: ${manuscript.characters.length}`, 30, y); y += 7;
-            pdf.text(`• Chapters: ${manuscript.outlines.length}`, 30, y); y += 7;
-            pdf.text(`• Scenes: ${manuscript.scenes.length}`, 30, y); y += 7;
-            pdf.text(`• Timeline Events: ${manuscript.timeline.length}`, 30, y); y += 7;
-            pdf.text(`• World Elements: ${manuscript.worldbuilding.length}`, 30, y); y += 7;
-            pdf.text(`• Writer's Notes: ${manuscript.notes.length}`, 30, y); y += 15;
-            
-            pdf.text('Your novel plan has been saved as a PDF. All data is preserved in your browser.', 20, y);
-            
-            pdf.save(`${title.replace(/[^a-z0-9]/gi, '_')}_Novel_Plan.pdf`);
-            showNotification('PDF downloaded successfully!', 'success');
-        }
-
-        // Save/Load functions
-        function saveManuscript() {
-            manuscript.writing = writingArea.value;
-            manuscript.title = document.getElementById('novelTitle').value;
-            manuscript.author = document.getElementById('authorName').value;
-            manuscript.genre = document.getElementById('genre').value;
-            
-            localStorage.setItem('novelPlannerData', JSON.stringify(manuscript));
-            showNotification('Manuscript saved to browser!', 'success');
-        }
-
-        function loadManuscript() {
-            const saved = localStorage.getItem('novelPlannerData');
-            if (saved) {
-                manuscript = JSON.parse(saved);
-                
-                writingArea.value = manuscript.writing || '';
-                document.getElementById('novelTitle').value = manuscript.title || 'Untitled Manuscript';
-                document.getElementById('authorName').value = manuscript.author || '';
-                document.getElementById('genre').value = manuscript.genre || '';
-                
-                updateCharacterTab();
-                updateSceneTab();
-                updateTimelineTab();
-                updateWorldTab();
-                updateOutlineTab();
-                updateNoteTab();
-                updateStats();
-                
-                showNotification('Manuscript loaded successfully!', 'success');
-            } else {
-                showNotification('No saved manuscript found.', 'info');
-            }
-        }
-
-        function printManuscript() {
-            window.print();
-        }
-
-        function clearAll() {
-            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-                manuscript = {
-                    writing: '',
-                    characters: [],
-                    scenes: [],
-                    timeline: [],
-                    worldbuilding: [],
-                    outlines: [],
-                    notes: [],
-                    title: 'Untitled Manuscript',
-                    author: '',
-                    genre: ''
-                };
-                
-                writingArea.value = '';
-                document.getElementById('novelTitle').value = 'Untitled Manuscript';
-                document.getElementById('authorName').value = '';
-                document.getElementById('genre').value = '';
-                
-                document.getElementById('charactersContainer').innerHTML = '';
-                document.getElementById('scenesContainer').innerHTML = '';
-                document.getElementById('timelineContainer').innerHTML = '';
-                document.getElementById('worldContainer').innerHTML = '';
-                document.getElementById('outlineContainer').innerHTML = '';
-                document.getElementById('notesContainer').innerHTML = '';
-                document.getElementById('activeToolsContainer').innerHTML = '';
-                
-                localStorage.removeItem('novelPlannerData');
-                updateStats();
-                showNotification('All data cleared!', 'success');
-            }
-        }
-
-        function loadFromStorage() {
-            const saved = localStorage.getItem('novelPlannerData');
-            if (saved) {
-                try {
-                    manuscript = JSON.parse(saved);
-                    writingArea.value = manuscript.writing || '';
-                    document.getElementById('novelTitle').value = manuscript.title || 'Untitled Manuscript';
-                    document.getElementById('authorName').value = manuscript.author || '';
-                    document.getElementById('genre').value = manuscript.genre || '';
-                } catch (e) {
-                    console.error('Error loading saved data:', e);
-                }
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            notification.textContent = message;
-            notification.style.display = 'block';
-            notification.style.background = type === 'error' ? '#ffcccc' :
-                                          type === 'success' ? 'var(--pastel-mint)' :
-                                          'var(--pastel-blue)';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-    </script>
 </body>
 </html>
