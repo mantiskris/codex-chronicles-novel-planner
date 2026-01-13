@@ -3,747 +3,1463 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Codex Chronicle - Intelligent Novel Planning</title>
+    <title>The Quill & Codex | Novel Planning Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Source+Serif+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --parchment: #f8f3e6;
-            --ink: #2c1810;
-            --gold: #d4af37;
-            --sienna: #8b4513;
-            --slate: #2f4f4f;
-            --crimson: #9d0000;
+            --parchment: #f5f1e8;
+            --aged-paper: #f0e6d3;
+            --ink-black: #1a1200;
+            --sepia: #704214;
+            --blood-red: #8b0000;
+            --gold-leaf: #d4af37;
+            --library-green: #2c4c3b;
+            --coffee-stain: #8b7355;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Source Serif Pro', serif;
+            font-family: 'Courier Prime', monospace;
             background-color: var(--parchment);
-            color: var(--ink);
-            line-height: 1.8;
-            background-image: radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 20%);
+            color: var(--ink-black);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(112, 66, 20, 0.03) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.03) 0%, transparent 20%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
         
-        .container {
+        /* Coffee stains */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 15%;
+            right: 10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(139, 115, 85, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 10%;
+            left: 5%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(112, 66, 20, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .typewriter-header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(to bottom, var(--aged-paper), var(--parchment));
+            border-bottom: 3px double var(--sepia);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                var(--sepia) 10px,
+                var(--sepia) 20px
+            );
+        }
+        
+        .title-wrapper {
+            display: inline-block;
+            position: relative;
+            padding: 0 40px;
+        }
+        
+        .title-wrapper::before,
+        .title-wrapper::after {
+            content: '❧';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            color: var(--blood-red);
+        }
+        
+        .title-wrapper::before { left: 0; }
+        .title-wrapper::after { right: 0; }
+        
+        .main-title {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 4.5rem;
+            color: var(--sepia);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: var(--library-green);
+            font-style: italic;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .typewriter-line {
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--sepia), transparent);
+            margin: 20px auto;
+        }
+        
+        .notebook-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 30px;
+            min-height: 80vh;
         }
         
-        .header {
-            padding: 40px 0;
-            text-align: center;
-            border-bottom: 2px solid var(--gold);
-            margin-bottom: 50px;
+        .sidebar {
+            background: var(--aged-paper);
+            border-right: 2px solid var(--sepia);
+            padding: 30px 20px;
+            border-radius: 5px 0 0 5px;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.05);
+            position: relative;
         }
         
-        .logo {
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50px;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(112, 66, 20, 0.05));
+            pointer-events: none;
+        }
+        
+        .sidebar-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 3.5rem;
-            color: var(--sienna);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
+            font-size: 1.8rem;
+            color: var(--sepia);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--sepia);
+            text-align: center;
         }
         
-        .logo-icon { font-size: 3rem; color: var(--gold); }
-        
-        .tagline {
-            font-size: 1.3rem;
-            color: var(--slate);
-            font-style: italic;
+        .planner-tool {
+            background: white;
+            border: 1px solid var(--sepia);
+            border-radius: 3px;
+            padding: 15px;
             margin-bottom: 20px;
+            cursor: move;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
         }
         
-        .section {
-            margin: 80px 0;
+        .planner-tool:hover {
+            transform: translateX(5px);
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
+            border-left: 3px solid var(--blood-red);
+        }
+        
+        .tool-icon {
+            color: var(--blood-red);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .main-content {
+            background: white;
+            border: 1px solid var(--sepia);
+            border-radius: 3px;
             padding: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(139, 69, 19, 0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.08);
+            min-height: 700px;
+            position: relative;
+            background-image: 
+                linear-gradient(to bottom, transparent 95%, rgba(112, 66, 20, 0.03) 100%);
+            background-size: 100% 30px;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--sepia);
         }
         
         .section-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            color: var(--sienna);
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--gold);
-            text-align: center;
+            font-size: 2.2rem;
+            color: var(--sepia);
         }
         
-        .widgets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin: 50px 0;
+        .page-number {
+            font-family: 'Courier Prime', monospace;
+            color: var(--coffee-stain);
+            font-size: 0.9rem;
         }
         
-        .widget-card {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(139, 69, 19, 0.2);
-            transition: transform 0.3s ease;
+        .writing-area {
+            min-height: 500px;
+            padding: 20px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--ink-black);
+            background: transparent;
+            border: none;
+            width: 100%;
+            resize: none;
+            outline: none;
+        }
+        
+        .writing-area::placeholder {
+            color: var(--coffee-stain);
+            opacity: 0.7;
+        }
+        
+        .character-card {
+            background: var(--aged-paper);
+            border: 1px solid var(--sepia);
+            border-radius: 3px;
+            padding: 20px;
+            margin-bottom: 20px;
             position: relative;
-            overflow: hidden;
-            cursor: pointer;
         }
         
-        .widget-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .widget-card::before {
+        .character-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--gold), var(--crimson));
+            top: 5px;
+            right: 5px;
+            width: 10px;
+            height: 10px;
+            background: var(--gold-leaf);
+            border-radius: 50%;
         }
         
-        .widget-icon {
-            font-size: 3rem;
-            color: var(--gold);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .widget-title {
+        .character-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            color: var(--sienna);
+            font-size: 1.5rem;
+            color: var(--sepia);
+            margin-bottom: 10px;
+        }
+        
+        .form-field {
             margin-bottom: 15px;
-            text-align: center;
         }
         
-        .widget-features {
-            list-style: none;
-            padding: 0;
+        .form-field label {
+            display: block;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--library-green);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
         }
         
-        .widget-features li {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(139, 69, 19, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .demo-interface {
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--sepia);
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            margin: 50px 0;
-            border: 1px solid rgba(139, 69, 19, 0.2);
+            font-family: 'Courier Prime', monospace;
+            color: var(--ink-black);
+            font-size: 1rem;
         }
         
-        .demo-header {
-            background: linear-gradient(135deg, var(--sienna), var(--slate));
-            color: white;
-            padding: 20px;
+        .form-input:focus {
+            outline: none;
+            border-color: var(--blood-red);
+            box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
+        }
+        
+        .form-textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .timeline {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 15px;
         }
         
-        .demo-body {
-            padding: 30px;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        .message {
-            max-width: 80%;
-            padding: 15px 20px;
-            border-radius: 10px;
+        .timeline-event {
+            background: white;
+            border-left: 3px solid var(--gold-leaf);
+            padding: 15px;
             position: relative;
-            cursor: pointer;
-            transition: transform 0.2s ease;
         }
         
-        .message:hover {
-            transform: scale(1.02);
-        }
-        
-        .message.ai {
-            background: rgba(212, 175, 55, 0.1);
-            align-self: flex-start;
-            border-left: 3px solid var(--gold);
-        }
-        
-        .message.user {
-            background: rgba(47, 79, 79, 0.1);
-            align-self: flex-end;
-            border-right: 3px solid var(--slate);
-        }
-        
-        .cta-section {
+        .timeline-event::before {
+            content: '●';
+            position: absolute;
+            left: -10px;
+            color: var(--gold-leaf);
+            background: var(--parchment);
+            width: 20px;
+            height: 20px;
             text-align: center;
-            padding: 60px 40px;
-            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05), rgba(47, 79, 79, 0.05));
-            border-radius: 15px;
-            margin: 80px 0;
-            border: 2px dashed var(--gold);
+            line-height: 20px;
         }
         
-        .cta-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.8rem;
-            color: var(--sienna);
-            margin-bottom: 20px;
+        .control-panel {
+            background: var(--aged-paper);
+            border-left: 2px solid var(--sepia);
+            padding: 30px 20px;
+            border-radius: 0 5px 5px 0;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.05);
         }
         
-        .cta-button {
-            display: inline-block;
-            padding: 18px 45px;
-            background: linear-gradient(135deg, var(--gold), var(--sienna));
+        .control-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: var(--sepia);
             color: white;
-            text-decoration: none;
-            border-radius: 50px;
+            border: none;
+            border-radius: 3px;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .control-btn:hover {
+            background: var(--library-green);
+            transform: translateY(-2px);
+        }
+        
+        .control-btn.save {
+            background: var(--library-green);
+        }
+        
+        .control-btn.export {
+            background: var(--blood-red);
+        }
+        
+        .control-btn.print {
+            background: var(--coffee-stain);
+        }
+        
+        .workspace-dropzone {
+            border: 2px dashed var(--sepia);
+            border-radius: 5px;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--coffee-stain);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
             margin-top: 30px;
             transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.3);
         }
         
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(139, 69, 19, 0.4);
-            background: linear-gradient(135deg, var(--sienna), var(--crimson));
+        .workspace-dropzone.drag-over {
+            border-color: var(--blood-red);
+            background: rgba(139, 0, 0, 0.05);
+        }
+        
+        .draggable {
+            cursor: move;
+            user-select: none;
+        }
+        
+        .tab-navigation {
+            display: flex;
+            border-bottom: 1px solid var(--sepia);
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--coffee-stain);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            color: var(--sepia);
+            border-bottom: 3px solid var(--blood-red);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .print-preview {
+            background: white;
+            padding: 40px;
+            border: 1px solid var(--sepia);
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.8;
+        }
+        
+        .print-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--sepia);
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px double var(--sepia);
+        }
+        
+        .print-section {
+            margin-bottom: 30px;
+        }
+        
+        .print-section h3 {
+            color: var(--library-green);
+            border-bottom: 1px solid var(--sepia);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
         }
         
         .footer {
             text-align: center;
-            padding: 40px 0;
-            margin-top: 80px;
-            border-top: 1px solid rgba(139, 69, 19, 0.2);
-            color: var(--slate);
+            padding: 30px;
+            color: var(--coffee-stain);
+            font-family: 'Cormorant Garamond', serif;
+            border-top: 1px solid var(--sepia);
+            margin-top: 50px;
+            background: var(--aged-paper);
         }
         
-        .modal {
-            display: none;
+        .typewriter-sound {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
+            bottom: 20px;
+            right: 20px;
+            background: var(--sepia);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            position: relative;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
             cursor: pointer;
-            color: var(--slate);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
         
-        .partyrock-btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #FF9900, #FF6600);
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--blood-red);
             color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 600;
-            margin: 15px 0;
-            transition: transform 0.3s ease;
-        }
-        
-        .partyrock-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
-        }
-        
-        /* ===== POPUP MODAL STYLES ===== */
-        .fullscreen-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: white;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .modal-header {
-            background: linear-gradient(135deg, var(--sienna), var(--slate));
-            color: white;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .modal-header h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .close-fullscreen {
-            background: rgba(255,255,255,0.2);
             border: none;
-            color: white;
-            font-size: 2rem;
-            width: 40px;
-            height: 40px;
+            width: 25px;
+            height: 25px;
             border-radius: 50%;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+            font-size: 0.8rem;
         }
         
-        .close-fullscreen:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1);
-        }
-        
-        .fullscreen-iframe {
-            flex: 1;
-            width: 100%;
-            border: none;
-            background: white;
-        }
-        
-        .modal-controls {
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--library-green);
+            color: white;
             padding: 15px 25px;
-            background: var(--parchment);
-            border-top: 1px solid rgba(139, 69, 19, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--slate);
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: 'Cormorant Garamond', serif;
+            z-index: 10000;
+            display: none;
         }
         
-        .modal-controls a {
-            color: var(--crimson);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .modal-controls a:hover {
-            text-decoration: underline;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .iframe-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: var(--slate);
-        }
-        
-        .iframe-loading i {
-            font-size: 3rem;
-            color: var(--gold);
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.6; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.6; transform: scale(0.95); }
-        }
-        
-        body.modal-open {
-            overflow: hidden;
+        @media (max-width: 1024px) {
+            .notebook-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar, .control-panel {
+                border: 1px solid var(--sepia);
+                border-radius: 5px;
+            }
         }
         
         @media (max-width: 768px) {
-            .widgets-grid { grid-template-columns: 1fr; }
-            .logo { font-size: 2.5rem; flex-direction: column; gap: 10px; }
-            .section { padding: 25px; }
-            .section-title { font-size: 2rem; }
-            .modal-controls { flex-direction: column; gap: 10px; text-align: center; }
+            .main-title {
+                font-size: 3rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-scroll logo-icon"></i>
-                The Codex Chronicle
-                <i class="fas fa-feather-alt logo-icon"></i>
-            </div>
-            <p class="tagline">Where your story finds its immortal form</p>
-            <p style="color: var(--slate); max-width: 800px; margin: 0 auto;">
-                An intelligent novel planner that remembers everything. Just talk about your story, 
-                and watch it transform into a beautifully organized manuscript.
-            </p>
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Header -->
+    <header class="typewriter-header">
+        <div class="header-border"></div>
+        <div class="title-wrapper">
+            <h1 class="main-title">The Quill & Codex</h1>
+            <p class="subtitle">A Novel Planning Studio for Discerning Writers</p>
         </div>
+        <div class="typewriter-line"></div>
     </header>
 
-    <div class="container">
-        <section class="section">
-            <h2 class="section-title">The Simple, Powerful Way to Plan Your Novel</h2>
-            <p style="text-align: center; font-size: 1.2rem; color: var(--slate); max-width: 900px; margin: 0 auto 40px;">
-                Forget complex planners with endless widgets. The Codex Chronicle uses three intelligent tools 
-                that work together seamlessly, remembering your entire story as you build it.
-            </p>
+    <!-- Main Notebook Layout -->
+    <div class="notebook-container">
+        <!-- Left Sidebar - Tools -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">Planning Tools</h2>
             
-            <div class="widgets-grid">
-                <div class="widget-card" onclick="openWidget('chronicle')">
-                    <div class="widget-icon"><i class="fas fa-comments"></i></div>
-                    <h3 class="widget-title">The Chronicle Conversation</h3>
-                    <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
-                        Just talk about your story naturally. The AI remembers every detail.
-                    </p>
-                    <ul class="widget-features">
-                        <li><i class="fas fa-check"></i> Remembers characters, plot, settings</li>
-                        <li><i class="fas fa-check"></i> Suggests connected plot twists</li>
-                        <li><i class="fas fa-check"></i> No repeating yourself</li>
-                    </ul>
-                </div>
-                
-                <div class="widget-card" onclick="openWidget('illumination')">
-                    <div class="widget-icon"><i class="fas fa-palette"></i></div>
-                    <h3 class="widget-title">The Illumination Studio</h3>
-                    <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
-                        Generate beautiful images that match your story perfectly.
-                    </p>
-                    <ul class="widget-features">
-                        <li><i class="fas fa-check"></i> One-click character portraits</li>
-                        <li><i class="fas fa-check"></i> Scene images from your descriptions</li>
-                        <li><i class="fas fa-check"></i> Consistent artistic style</li>
-                    </ul>
-                </div>
-                
-                <div class="widget-card" onclick="openWidget('codex')">
-                    <div class="widget-icon"><i class="fas fa-book"></i></div>
-                    <h3 class="widget-title">The Final Codex</h3>
-                    <p style="text-align: center; color: var(--slate); margin-bottom: 20px;">
-                        Auto-generates a beautiful PDF manuscript from your conversation.
-                    </p>
-                    <ul class="widget-features">
-                        <li><i class="fas fa-check"></i> Auto-compiles everything</li>
-                        <li><i class="fas fa-check"></i> Professional PDF formatting</li>
-                        <li><i class="fas fa-check"></i> Includes all generated images</li>
-                    </ul>
+            <div class="planner-tool draggable" data-tool="character" id="tool-character">
+                <i class="fas fa-user tool-icon"></i>
+                <strong>Character Builder</strong>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: var(--coffee-stain);">
+                    Create detailed character profiles
+                </p>
+            </div>
+            
+            <div class="planner-tool draggable" data-tool="scene" id="tool-scene">
+                <i class="fas fa-map tool-icon"></i>
+                <strong>Scene Card</strong>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: var(--coffee-stain);">
+                    Plan individual scenes
+                </p>
+            </div>
+            
+            <div class="planner-tool draggable" data-tool="timeline" id="tool-timeline">
+                <i class="fas fa-timeline tool-icon"></i>
+                <strong>Plot Timeline</strong>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: var(--coffee-stain);">
+                    Visual timeline of events
+                </p>
+            </div>
+            
+            <div class="planner-tool draggable" data-tool="world" id="tool-world">
+                <i class="fas fa-globe tool-icon"></i>
+                <strong>World Building</strong>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: var(--coffee-stain);">
+                    Create your story's world
+                </p>
+            </div>
+            
+            <div class="planner-tool draggable" data-tool="outline" id="tool-outline">
+                <i class="fas fa-list-ol tool-icon"></i>
+                <strong>Chapter Outline</strong>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: var(--coffee-stain);">
+                    Structure your chapters
+                </p>
+            </div>
+            
+            <div class="planner-tool draggable" data-tool="notes" id="tool-notes">
+                <i class="fas fa-sticky-note tool-icon"></i>
+                <strong>Writer's Notes</strong>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: var(--coffee-stain);">
+                    General notes and ideas
+                </p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2 class="section-title">Your Novel Workspace</h2>
+                <div class="page-number">Page <span id="currentPage">1</span></div>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="writing">Writing</button>
+                <button class="tab-btn" data-tab="characters">Characters</button>
+                <button class="tab-btn" data-tab="outline">Outline</button>
+                <button class="tab-btn" data-tab="preview">Print Preview</button>
+            </div>
+            
+            <!-- Writing Tab -->
+            <div class="tab-content active" id="writing-tab">
+                <textarea class="writing-area" placeholder="Begin your story here... The ink awaits your words." id="mainWritingArea"></textarea>
+                <div style="text-align: right; margin-top: 10px; color: var(--coffee-stain); font-size: 0.9rem;">
+                    <span id="writingWordCount">0</span> words
                 </div>
             </div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">See It In Action</h2>
-            <div class="demo-interface">
-                <div class="demo-header"><i class="fas fa-comment-alt"></i> The Chronicle Conversation</div>
-                <div class="demo-body" id="conversationDemo">
-                    <div class="message ai" onclick="showMessage('ai')">
-                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
-                        <div>Welcome! Tell me about your story - characters, plot ideas, anything. I'll remember everything.</div>
-                    </div>
-                    <div class="message user" onclick="showMessage('user')">
-                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
-                        <div>My protagonist is Elara, a librarian who discovers a book that glows at midnight.</div>
-                    </div>
-                    <div class="message ai" onclick="showMessage('ai')">
-                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
-                        <div>Elara the librarian + mysterious glowing book. What happens when she opens it?</div>
-                    </div>
-                    <div class="message user" onclick="showMessage('user')">
-                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
-                        <div>Plot twist: The book contains her grandfather's lost research about magical libraries.</div>
-                    </div>
-                    <div class="message ai" onclick="showMessage('ai')">
-                        <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
-                        <div>Great twist! So Elara's discovery connects to family history. This could explain why the book chose her.</div>
-                    </div>
+            
+            <!-- Characters Tab -->
+            <div class="tab-content" id="characters-tab">
+                <div id="charactersContainer">
+                    <!-- Character cards will be added here -->
                 </div>
-                
-                <!-- Interactive Input -->
-                <div style="padding: 20px; border-top: 1px solid rgba(139, 69, 19, 0.2);">
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="userInput" placeholder="Type your story idea here..." 
-                               style="flex: 1; padding: 12px; border: 1px solid var(--sienna); border-radius: 5px; font-family: 'Source Serif Pro', serif;">
-                        <button onclick="addUserMessage()" 
-                                style="padding: 12px 25px; background: var(--sienna); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                            Send
-                        </button>
-                    </div>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--slate); text-align: center;">
-                        Try it out! This demo simulates how the AI responds to your story ideas.
-                    </p>
-                </div>
+                <button class="control-btn" onclick="addCharacter()" style="width: auto; margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Add New Character
+                </button>
             </div>
-        </section>
+            
+            <!-- Outline Tab -->
+            <div class="tab-content" id="outline-tab">
+                <div class="timeline" id="timelineContainer">
+                    <!-- Timeline events will be added here -->
+                </div>
+                <button class="control-btn" onclick="addTimelineEvent()" style="width: auto; margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Add Plot Point
+                </button>
+            </div>
+            
+            <!-- Print Preview Tab -->
+            <div class="tab-content" id="preview-tab">
+                <div class="print-preview" id="printPreview">
+                    <!-- Printable content will be generated here -->
+                </div>
+                <button class="control-btn export" onclick="generatePDF()" style="margin-top: 20px;">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+            
+            <!-- Drop Zone for Tools -->
+            <div class="workspace-dropzone" id="workspaceDropzone">
+                <i class="fas fa-arrow-down" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>Drag planning tools here to add them to your workspace</p>
+            </div>
+            
+            <!-- Active Tools Container -->
+            <div id="activeToolsContainer"></div>
+        </main>
 
-        <section class="cta-section">
-            <h2 class="cta-title">Begin Your Chronicle</h2>
-            <p style="font-size: 1.2rem; color: var(--slate); max-width: 700px; margin: 0 auto 30px;">
-                Join writers who have turned conversation into completed manuscripts. 
-                No learning curve, no complex tools - just your story, beautifully realized.
-            </p>
-            <button class="cta-button" onclick="launchApp()">
-                <i class="fas fa-play-circle"></i> Launch The Codex Chronicle
+        <!-- Right Control Panel -->
+        <aside class="control-panel">
+            <h2 class="sidebar-title">Manuscript Controls</h2>
+            
+            <button class="control-btn save" onclick="saveManuscript()">
+                <i class="fas fa-save"></i> Save to Browser
             </button>
-            <div style="margin-top: 20px;">
-                <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
-                   target="_blank" class="partyrock-btn">
-                    <i class="fas fa-external-link-alt"></i> Open in New Tab
-                </a>
+            
+            <button class="control-btn" onclick="loadManuscript()">
+                <i class="fas fa-folder-open"></i> Load from Browser
+            </button>
+            
+            <button class="control-btn export" onclick="generatePDF()">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </button>
+            
+            <button class="control-btn print" onclick="printManuscript()">
+                <i class="fas fa-print"></i> Print Manuscript
+            </button>
+            
+            <button class="control-btn" onclick="clearAll()" style="background: var(--coffee-stain);">
+                <i class="fas fa-broom"></i> Clear All
+            </button>
+            
+            <div style="margin-top: 30px;">
+                <h3 style="color: var(--sepia); margin-bottom: 15px; font-family: 'Cormorant Garamond';">Word Count</h3>
+                <div style="background: white; padding: 15px; border: 1px solid var(--sepia); border-radius: 3px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Writing:</span>
+                        <strong id="wordCount">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                        <span>Characters:</span>
+                        <strong id="charCount">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                        <span>Scenes:</span>
+                        <strong id="sceneCount">0</strong>
+                    </div>
+                </div>
             </div>
-            <p style="margin-top: 20px; color: var(--slate); font-size: 0.9rem;">
-                Free forever • No account required • Works on all devices
-            </p>
-        </section>
+            
+            <div style="margin-top: 30px;">
+                <h3 style="color: var(--sepia); margin-bottom: 15px; font-family: 'Cormorant Garamond';">Manuscript Info</h3>
+                <div class="form-field">
+                    <label for="novelTitle">Novel Title:</label>
+                    <input type="text" id="novelTitle" class="form-input" placeholder="Untitled Manuscript">
+                </div>
+                <div class="form-field">
+                    <label for="authorName">Author:</label>
+                    <input type="text" id="authorName" class="form-input" placeholder="Your Name">
+                </div>
+            </div>
+        </aside>
     </div>
 
     <footer class="footer">
-        <div class="container">
-            <div style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 20px; color: var(--sienna);">
-                <i class="fas fa-scroll"></i> The Codex Chronicle
-            </div>
-            <p>Connected to: <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
-                               target="_blank" style="color: var(--crimson);">The Scriptorium: Narrative Forge</a></p>
-            <p>&copy; 2024 The Codex Chronicle. Every story deserves its proper chronicle.</p>
-        </div>
+        <p><i class="fas fa-feather-alt"></i> The Quill & Codex | Your words, immortalized in ink</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">All data is saved locally in your browser. No account needed.</p>
     </footer>
 
-    <!-- Modal for Widget Info -->
-    <div class="modal" id="widgetModal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal()">&times;</button>
-            <h3 id="modalTitle" style="color: var(--sienna); margin-bottom: 20px;"></h3>
-            <p id="modalDescription" style="margin-bottom: 20px;"></p>
-            <a href="https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge" 
-               target="_blank" class="partyrock-btn">
-                <i class="fas fa-external-link-alt"></i> Open This Tool in PartyRock
-            </a>
-        </div>
-    </div>
-
     <script>
-        // Your actual PartyRock URL
-        const PARTYROCK_URL = 'https://partyrock.aws/u/KJAM924/Ww_YxGSzC/The-Scriptorium%253A-Narrative-Forge';
-        
-        // Launch the app in a fullscreen modal (POPUP VERSION)
-        function launchApp() {
-            // Create the modal HTML
-            const modalHTML = `
-                <div class="fullscreen-modal" id="partyrockModal">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-scroll"></i> The Codex Chronicle AI App</h3>
-                        <button class="close-fullscreen" onclick="closeFullscreen()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+        // State management
+        let manuscript = {
+            writing: '',
+            characters: [],
+            timeline: [],
+            scenes: [],
+            worldbuilding: [],
+            notes: [],
+            novelTitle: 'Untitled Manuscript',
+            authorName: 'Anonymous Writer',
+            lastSaved: null
+        };
+
+        // DOM elements
+        const mainWritingArea = document.getElementById('mainWritingArea');
+        const charactersContainer = document.getElementById('charactersContainer');
+        const timelineContainer = document.getElementById('timelineContainer');
+        const activeToolsContainer = document.getElementById('activeToolsContainer');
+        const workspaceDropzone = document.getElementById('workspaceDropzone');
+        const printPreview = document.getElementById('printPreview');
+        const notification = document.getElementById('notification');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
+            setupDragAndDrop();
+            setupTabs();
+            setupEventListeners();
+            updateCounts();
+            generatePrintPreview();
+            
+            // Auto-save every 30 seconds
+            setInterval(saveManuscript, 30000);
+        });
+
+        // Setup tabs
+        function setupTabs() {
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
                     
-                    <div class="iframe-loading" id="loadingIndicator">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading your AI writing assistant...</p>
-                    </div>
+                    // Update active tab button
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
                     
-                    <iframe 
-                        src="${PARTYROCK_URL}" 
-                        class="fullscreen-iframe"
-                        allow="clipboard-write"
-                        title="The Codex Chronicle AI App"
-                        id="partyrockIframe"
-                        onload="hideLoading()">
-                    </iframe>
+                    // Show active tab content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.add('active');
+                        }
+                    });
                     
-                    <div class="modal-controls">
-                        <div>
-                            <i class="fas fa-info-circle"></i> 
-                            This AI app runs directly in your browser
+                    if (tabId === 'preview') {
+                        generatePrintPreview();
+                    }
+                });
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Word count update
+            mainWritingArea.addEventListener('input', function() {
+                updateCounts();
+                manuscript.writing = this.value;
+            });
+            
+            // Novel title and author updates
+            document.getElementById('novelTitle').addEventListener('input', function() {
+                manuscript.novelTitle = this.value;
+            });
+            
+            document.getElementById('authorName').addEventListener('input', function() {
+                manuscript.authorName = this.value;
+            });
+        }
+
+        // Setup drag and drop
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable');
+            
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', this.getAttribute('data-tool'));
+                    this.classList.add('dragging');
+                });
+                
+                draggable.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+            });
+            
+            workspaceDropzone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('drag-over');
+            });
+            
+            workspaceDropzone.addEventListener('dragleave', function() {
+                this.classList.remove('drag-over');
+            });
+            
+            workspaceDropzone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                
+                const toolType = e.dataTransfer.getData('text/plain');
+                addToolToWorkspace(toolType);
+            });
+        }
+
+        // Add tool to workspace
+        function addToolToWorkspace(toolType) {
+            let toolHTML = '';
+            let toolId = Date.now();
+            
+            switch(toolType) {
+                case 'character':
+                    toolHTML = `
+                        <div class="character-card" id="character-${toolId}">
+                            <button class="delete-btn" onclick="removeTool('character-${toolId}')">×</button>
+                            <h3 class="character-name">New Character</h3>
+                            <div class="form-field">
+                                <label>Name:</label>
+                                <input type="text" class="form-input character-name-input" placeholder="Character Name">
+                            </div>
+                            <div class="form-field">
+                                <label>Role:</label>
+                                <input type="text" class="form-input character-role-input" placeholder="Protagonist/Antagonist/Supporting">
+                            </div>
+                            <div class="form-field">
+                                <label>Description:</label>
+                                <textarea class="form-input form-textarea character-desc-input" placeholder="Physical appearance, personality, backstory..."></textarea>
+                            </div>
+                            <div class="form-field">
+                                <label>Motivation:</label>
+                                <input type="text" class="form-input character-motivation-input" placeholder="What drives this character?">
+                            </div>
+                            <button class="control-btn" onclick="saveCharacterFromTool('character-${toolId}')" style="padding: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-save"></i> Save Character
+                            </button>
                         </div>
-                        <a href="${PARTYROCK_URL}" target="_blank">
-                            <i class="fas fa-external-link-alt"></i> Open in new tab
-                        </a>
+                    `;
+                    break;
+                    
+                case 'scene':
+                    toolHTML = `
+                        <div class="character-card" id="scene-${toolId}">
+                            <button class="delete-btn" onclick="removeTool('scene-${toolId}')">×</button>
+                            <h3 class="character-name">New Scene</h3>
+                            <div class="form-field">
+                                <label>Scene Title:</label>
+                                <input type="text" class="form-input scene-title-input" placeholder="Chapter 1: The Beginning">
+                            </div>
+                            <div class="form-field">
+                                <label>Location:</label>
+                                <input type="text" class="form-input scene-location-input" placeholder="Where does this happen?">
+                            </div>
+                            <div class="form-field">
+                                <label>Characters:</label>
+                                <input type="text" class="form-input scene-characters-input" placeholder="Which characters appear?">
+                            </div>
+                            <div class="form-field">
+                                <label>Summary:</label>
+                                <textarea class="form-input form-textarea scene-summary-input" placeholder="What happens in this scene?"></textarea>
+                            </div>
+                            <button class="control-btn" onclick="saveScene('scene-${toolId}')" style="padding: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-save"></i> Save Scene
+                            </button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'timeline':
+                    toolHTML = `
+                        <div class="timeline-event" id="timeline-${toolId}">
+                            <button class="delete-btn" onclick="removeTool('timeline-${toolId}')">×</button>
+                            <div class="form-field">
+                                <label>Event:</label>
+                                <input type="text" class="form-input timeline-event-input" placeholder="Major plot event">
+                            </div>
+                            <div class="form-field">
+                                <label>Chapter:</label>
+                                <input type="text" class="form-input timeline-chapter-input" placeholder="Chapter number">
+                            </div>
+                            <div class="form-field">
+                                <label>Description:</label>
+                                <textarea class="form-input form-textarea timeline-desc-input" placeholder="Event details"></textarea>
+                            </div>
+                            <button class="control-btn" onclick="saveTimelineEvent('timeline-${toolId}')" style="padding: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-save"></i> Save Event
+                            </button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'world':
+                    toolHTML = `
+                        <div class="character-card" id="world-${toolId}">
+                            <button class="delete-btn" onclick="removeTool('world-${toolId}')">×</button>
+                            <h3 class="character-name">World Building</h3>
+                            <div class="form-field">
+                                <label>Category:</label>
+                                <select class="form-input world-category-input">
+                                    <option value="location">Location</option>
+                                    <option value="culture">Culture</option>
+                                    <option value="magic">Magic System</option>
+                                    <option value="history">History</option>
+                                    <option value="technology">Technology</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Name:</label>
+                                <input type="text" class="form-input world-name-input" placeholder="Kingdom/Culture/System Name">
+                            </div>
+                            <div class="form-field">
+                                <label>Description:</label>
+                                <textarea class="form-input form-textarea world-desc-input" placeholder="Detailed description..."></textarea>
+                            </div>
+                            <button class="control-btn" onclick="saveWorldBuilding('world-${toolId}')" style="padding: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-save"></i> Save World Building
+                            </button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'outline':
+                    toolHTML = `
+                        <div class="character-card" id="outline-${toolId}">
+                            <button class="delete-btn" onclick="removeTool('outline-${toolId}')">×</button>
+                            <h3 class="character-name">Chapter Outline</h3>
+                            <div class="form-field">
+                                <label>Chapter:</label>
+                                <input type="text" class="form-input outline-chapter-input" placeholder="Chapter 1">
+                            </div>
+                            <div class="form-field">
+                                <label>Title:</label>
+                                <input type="text" class="form-input outline-title-input" placeholder="Chapter Title">
+                            </div>
+                            <div class="form-field">
+                                <label>POV Character:</label>
+                                <input type="text" class="form-input outline-pov-input" placeholder="Whose perspective?">
+                            </div>
+                            <div class="form-field">
+                                <label>Summary:</label>
+                                <textarea class="form-input form-textarea outline-summary-input" placeholder="What happens in this chapter?"></textarea>
+                            </div>
+                            <button class="control-btn" onclick="saveChapterOutline('outline-${toolId}')" style="padding: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-save"></i> Save Chapter
+                            </button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'notes':
+                    toolHTML = `
+                        <div class="character-card" id="notes-${toolId}">
+                            <button class="delete-btn" onclick="removeTool('notes-${toolId}')">×</button>
+                            <h3 class="character-name">Writer's Notes</h3>
+                            <div class="form-field">
+                                <label>Note Type:</label>
+                                <select class="form-input notes-type-input">
+                                    <option value="idea">Story Idea</option>
+                                    <option value="dialogue">Dialogue</option>
+                                    <option value="theme">Theme</option>
+                                    <option value="research">Research</option>
+                                    <option value="todo">To-Do</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Content:</label>
+                                <textarea class="form-input form-textarea notes-content-input" placeholder="Your notes..."></textarea>
+                            </div>
+                            <button class="control-btn" onclick="saveWriterNote('notes-${toolId}')" style="padding: 8px; font-size: 0.9rem;">
+                                <i class="fas fa-save"></i> Save Note
+                            </button>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            activeToolsContainer.insertAdjacentHTML('beforeend', toolHTML);
+            showNotification(`${toolType.replace(/-/g, ' ')} tool added to workspace`);
+        }
+
+        // Remove tool from workspace
+        function removeTool(toolId) {
+            const tool = document.getElementById(toolId);
+            if (tool) tool.remove();
+        }
+
+        // Save character from tool
+        function saveCharacterFromTool(toolId) {
+            const tool = document.getElementById(toolId);
+            const character = {
+                id: Date.now(),
+                name: tool.querySelector('.character-name-input').value || 'Unnamed Character',
+                role: tool.querySelector('.character-role-input').value || 'Unknown',
+                description: tool.querySelector('.character-desc-input').value || '',
+                motivation: tool.querySelector('.character-motivation-input').value || ''
+            };
+            
+            manuscript.characters.push(character);
+            showNotification('Character saved!');
+            updateCounts();
+        }
+
+        // Add character via button
+        function addCharacter() {
+            const characterId = Date.now();
+            const characterHTML = `
+                <div class="character-card" id="saved-character-${characterId}">
+                    <button class="delete-btn" onclick="deleteCharacter(${characterId})">×</button>
+                    <div class="form-field">
+                        <label>Name:</label>
+                        <input type="text" class="form-input character-saved-name" placeholder="Character Name" value="New Character ${manuscript.characters.length + 1}">
+                    </div>
+                    <div class="form-field">
+                        <label>Role:</label>
+                        <input type="text" class="form-input character-saved-role" placeholder="Protagonist/Antagonist/Supporting">
+                    </div>
+                    <div class="form-field">
+                        <label>Description:</label>
+                        <textarea class="form-input form-textarea character-saved-desc" placeholder="Physical appearance, personality, backstory..."></textarea>
+                    </div>
+                    <div class="form-field">
+                        <label>Motivation:</label>
+                        <input type="text" class="form-input character-saved-motivation" placeholder="What drives this character?">
                     </div>
                 </div>
             `;
             
-            // Add modal to page
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            charactersContainer.insertAdjacentHTML('beforeend', characterHTML);
+        }
+
+        // Delete character
+        function deleteCharacter(characterId) {
+            const element = document.getElementById(`saved-character-${characterId}`);
+            if (element) element.remove();
+            updateCounts();
+        }
+
+        // Add timeline event
+        function addTimelineEvent() {
+            const eventId = Date.now();
+            const eventHTML = `
+                <div class="timeline-event" id="saved-timeline-${eventId}">
+                    <button class="delete-btn" onclick="deleteTimelineEvent(${eventId})">×</button>
+                    <div class="form-field">
+                        <label>Event:</label>
+                        <input type="text" class="form-input timeline-saved-event" placeholder="Major plot event" value="Plot Point ${manuscript.timeline.length + 1}">
+                    </div>
+                    <div class="form-field">
+                        <label>Chapter:</label>
+                        <input type="text" class="form-input timeline-saved-chapter" placeholder="Chapter number">
+                    </div>
+                    <div class="form-field">
+                        <label>Description:</label>
+                        <textarea class="form-input form-textarea timeline-saved-desc" placeholder="Event details"></textarea>
+                    </div>
+                </div>
+            `;
             
-            // Prevent body scrolling
-            document.body.classList.add('modal-open');
+            timelineContainer.insertAdjacentHTML('beforeend', eventHTML);
+        }
+
+        // Delete timeline event
+        function deleteTimelineEvent(eventId) {
+            const element = document.getElementById(`saved-timeline-${eventId}`);
+            if (element) element.remove();
+        }
+
+        // Save scene
+        function saveScene(toolId) {
+            const tool = document.getElementById(toolId);
+            const scene = {
+                id: Date.now(),
+                title: tool.querySelector('.scene-title-input').value || 'Untitled Scene',
+                location: tool.querySelector('.scene-location-input').value || '',
+                characters: tool.querySelector('.scene-characters-input').value || '',
+                summary: tool.querySelector('.scene-summary-input').value || ''
+            };
             
-            // Close modal with Escape key
-            document.addEventListener('keydown', function closeOnEscape(e) {
-                if (e.key === 'Escape') closeFullscreen();
+            manuscript.scenes.push(scene);
+            showNotification('Scene saved!');
+            updateCounts();
+        }
+
+        // Save timeline event
+        function saveTimelineEvent(toolId) {
+            const tool = document.getElementById(toolId);
+            const event = {
+                id: Date.now(),
+                event: tool.querySelector('.timeline-event-input').value || 'New Event',
+                chapter: tool.querySelector('.timeline-chapter-input').value || '',
+                description: tool.querySelector('.timeline-desc-input').value || ''
+            };
+            
+            manuscript.timeline.push(event);
+            showNotification('Timeline event saved!');
+        }
+
+        // Save world building
+        function saveWorldBuilding(toolId) {
+            const tool = document.getElementById(toolId);
+            const world = {
+                id: Date.now(),
+                category: tool.querySelector('.world-category-input').value,
+                name: tool.querySelector('.world-name-input').value || 'Unnamed',
+                description: tool.querySelector('.world-desc-input').value || ''
+            };
+            
+            manuscript.worldbuilding.push(world);
+            showNotification('World building saved!');
+        }
+
+        // Save chapter outline
+        function saveChapterOutline(toolId) {
+            const tool = document.getElementById(toolId);
+            const chapter = {
+                id: Date.now(),
+                chapter: tool.querySelector('.outline-chapter-input').value || 'Chapter',
+                title: tool.querySelector('.outline-title-input').value || '',
+                pov: tool.querySelector('.outline-pov-input').value || '',
+                summary: tool.querySelector('.outline-summary-input').value || ''
+            };
+            
+            // This would normally be added to an outlines array
+            showNotification('Chapter outline saved!');
+        }
+
+        // Save writer note
+        function saveWriterNote(toolId) {
+            const tool = document.getElementById(toolId);
+            const note = {
+                id: Date.now(),
+                type: tool.querySelector('.notes-type-input').value,
+                content: tool.querySelector('.notes-content-input').value || ''
+            };
+            
+            manuscript.notes.push(note);
+            showNotification('Note saved!');
+        }
+
+        // Update word counts
+        function updateCounts() {
+            const writingText = mainWritingArea.value;
+            const wordCount = writingText.trim() === '' ? 0 : writingText.trim().split(/\s+/).length;
+            const charCount = writingText.length;
+            
+            document.getElementById('wordCount').textContent = wordCount;
+            document.getElementById('writingWordCount').textContent = wordCount;
+            document.getElementById('charCount').textContent = manuscript.characters.length;
+            document.getElementById('sceneCount').textContent = manuscript.scenes.length;
+        }
+
+        // Generate print preview
+        function generatePrintPreview() {
+            const title = document.getElementById('novelTitle').value || manuscript.novelTitle;
+            const author = document.getElementById('authorName').value || manuscript.authorName;
+            
+            let previewHTML = `
+                <h1 class="print-title">${title}</h1>
+                <p style="text-align: center; font-style: italic; margin-bottom: 40px;">by ${author}</p>
+                
+                <div class="print-section">
+                    <h3>Synopsis</h3>
+                    <p>${mainWritingArea.value.substring(0, 500)}${mainWritingArea.value.length > 500 ? '...' : ''}</p>
+                </div>
+            `;
+            
+            if (manuscript.characters.length > 0) {
+                previewHTML += `
+                    <div class="print-section">
+                        <h3>Characters</h3>
+                        ${manuscript.characters.map(char => `
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: var(--sepia);">${char.name}</h4>
+                                <p><strong>Role:</strong> ${char.role}</p>
+                                <p><strong>Motivation:</strong> ${char.motivation}</p>
+                                <p>${char.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            if (manuscript.timeline.length > 0) {
+                previewHTML += `
+                    <div class="print-section">
+                        <h3>Plot Timeline</h3>
+                        ${manuscript.timeline.map(event => `
+                            <div style="margin-bottom: 15px; padding-left: 20px; border-left: 2px solid var(--gold-leaf);">
+                                <h4 style="color: var(--sepia); margin: 0;">${event.event}</h4>
+                                <p style="margin: 5px 0 0 0; color: var(--coffee-stain);">Chapter: ${event.chapter}</p>
+                                <p>${event.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            if (manuscript.scenes.length > 0) {
+                previewHTML += `
+                    <div class="print-section">
+                        <h3>Key Scenes</h3>
+                        ${manuscript.scenes.map(scene => `
+                            <div style="margin-bottom: 15px;">
+                                <h4 style="color: var(--sepia);">${scene.title}</h4>
+                                <p><strong>Location:</strong> ${scene.location}</p>
+                                <p><strong>Characters:</strong> ${scene.characters}</p>
+                                <p>${scene.summary}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            printPreview.innerHTML = previewHTML;
+        }
+
+        // Generate PDF
+        function generatePDF() {
+            showNotification('Generating PDF...', 'info');
+            
+            // Create a temporary div for PDF generation
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '40px';
+            pdfContent.style.fontFamily = "'Cormorant Garamond', serif";
+            pdfContent.style.lineHeight = '1.6';
+            pdfContent.style.color = '#1a1200';
+            
+            const title = document.getElementById('novelTitle').value || manuscript.novelTitle;
+            const author = document.getElementById('authorName').value || manuscript.authorName;
+            const date = new Date().toLocaleDateString();
+            
+            pdfContent.innerHTML = `
+                <h1 style="text-align: center; font-size: 28px; color: #704214; margin-bottom: 20px; border-bottom: 2px double #704214; padding-bottom: 15px;">
+                    ${title}
+                </h1>
+                <p style="text-align: center; font-style: italic; margin-bottom: 40px;">by ${author}</p>
+                <p style="text-align: center; color: #8b7355; margin-bottom: 50px;">Generated on ${date}</p>
+                
+                <div style="margin-bottom: 40px;">
+                    <h2 style="color: #2c4c3b; border-bottom: 1px solid #704214; padding-bottom: 5px; margin-bottom: 15px;">Synopsis</h2>
+                    <p style="white-space: pre-wrap;">${mainWritingArea.value}</p>
+                </div>
+                
+                ${manuscript.characters.length > 0 ? `
+                    <div style="margin-bottom: 40px;">
+                        <h2 style="color: #2c4c3b; border-bottom: 1px solid #704214; padding-bottom: 5px; margin-bottom: 15px;">Characters</h2>
+                        ${manuscript.characters.map(char => `
+                            <div style="margin-bottom: 25px; padding: 15px; border: 1px solid #f0e6d3; background: #f5f1e8;">
+                                <h3 style="color: #704214; margin: 0 0 10px 0;">${char.name}</h3>
+                                <p style="margin: 5px 0;"><strong>Role:</strong> ${char.role}</p>
+                                <p style="margin: 5px 0;"><strong>Motivation:</strong> ${char.motivation}</p>
+                                <p style="margin: 10px 0 0 0; white-space: pre-wrap;">${char.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                ${manuscript.timeline.length > 0 ? `
+                    <div style="margin-bottom: 40px;">
+                        <h2 style="color: #2c4c3b; border-bottom: 1px solid #704214; padding-bottom: 5px; margin-bottom: 15px;">Plot Timeline</h2>
+                        ${manuscript.timeline.map(event => `
+                            <div style="margin-bottom: 15px; padding-left: 15px; border-left: 2px solid #d4af37;">
+                                <h4 style="color: #704214; margin: 0;">${event.event}</h4>
+                                <p style="margin: 5px 0 0 0; color: #8b7355;">Chapter: ${event.chapter}</p>
+                                <p style="margin: 5px 0 0 0; white-space: pre-wrap;">${event.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                ${manuscript.scenes.length > 0 ? `
+                    <div style="margin-bottom: 40px;">
+                        <h2 style="color: #2c4c3b; border-bottom: 1px solid #704214; padding-bottom: 5px; margin-bottom: 15px;">Key Scenes</h2>
+                        ${manuscript.scenes.map(scene => `
+                            <div style="margin-bottom: 20px; padding: 15px; border: 1px dashed #8b7355;">
+                                <h4 style="color: #704214; margin: 0 0 10px 0;">${scene.title}</h4>
+                                <p style="margin: 5px 0;"><strong>Location:</strong> ${scene.location}</p>
+                                <p style="margin: 5px 0;"><strong>Characters:</strong> ${scene.characters}</p>
+                                <p style="margin: 10px 0 0 0; white-space: pre-wrap;">${scene.summary}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid #704214; color: #8b7355;">
+                    <p>Generated with The Quill & Codex Novel Planner</p>
+                    <p>Total Words: ${mainWritingArea.value.trim() === '' ? 0 : mainWritingArea.value.trim().split(/\s+/).length}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(pdfContent);
+            
+            // Use html2canvas to capture the content
+            html2canvas(pdfContent, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                
+                let heightLeft = imgHeight;
+                let position = 0;
+                
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Save the PDF
+                pdf.save(`${title.replace(/[^a-z0-9]/gi, '_')}_Manuscript.pdf`);
+                
+                // Clean up
+                document.body.removeChild(pdfContent);
+                showNotification('PDF downloaded successfully!', 'success');
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                showNotification('Error generating PDF. Please try again.', 'error');
+                document.body.removeChild(pdfContent);
             });
         }
-        
-        // Hide loading indicator when iframe loads
-        function hideLoading() {
-            const loading = document.getElementById('loadingIndicator');
-            if (loading) loading.style.display = 'none';
+
+        // Save manuscript to localStorage
+        function saveManuscript() {
+            // Collect all data
+            manuscript.writing = mainWritingArea.value;
+            manuscript.novelTitle = document.getElementById('novelTitle').value;
+            manuscript.authorName = document.getElementById('authorName').value;
+            manuscript.lastSaved = new Date().toISOString();
+            
+            // Save to localStorage
+            localStorage.setItem('quillCodexManuscript', JSON.stringify(manuscript));
+            showNotification('Manuscript saved locally', 'success');
         }
-        
-        // Close the fullscreen modal
-        function closeFullscreen() {
-            const modal = document.getElementById('partyrockModal');
-            if (modal) {
-                modal.remove();
-                document.body.classList.remove('modal-open');
+
+        // Load manuscript from localStorage
+        function loadManuscript() {
+            const saved = localStorage.getItem('quillCodexManuscript');
+            if (saved) {
+                manuscript = JSON.parse(saved);
+                
+                // Restore data
+                mainWritingArea.value = manuscript.writing;
+                document.getElementById('novelTitle').value = manuscript.novelTitle;
+                document.getElementById('authorName').value = manuscript.authorName;
+                
+                updateCounts();
+                generatePrintPreview();
+                showNotification('Manuscript loaded from local storage', 'success');
+            } else {
+                showNotification('No saved manuscript found', 'info');
             }
         }
-        
-        // Open specific widget info
-        function openWidget(widgetType) {
-            const modal = document.getElementById('widgetModal');
-            const title = document.getElementById('modalTitle');
-            const description = document.getElementById('modalDescription');
-            
-            const widgets = {
-                'chronicle': {
-                    title: 'The Chronicle Conversation',
-                    desc: 'This is your main AI conversation tool. It remembers every detail of your story, suggests plot connections, and helps develop your narrative organically.'
-                },
-                'illumination': {
-                    title: 'The Illumination Studio',
-                    desc: 'Generate character portraits, scene images, and book covers that match your story perfectly. All images maintain a consistent artistic style.'
-                },
-                'codex': {
-                    title: 'The Final Codex',
-                    desc: 'Automatically compiles your entire story into a professionally formatted PDF manuscript, complete with all generated images and organized chapters.'
-                }
-            };
-            
-            title.textContent = widgets[widgetType].title;
-            description.textContent = widgets[widgetType].desc;
-            modal.style.display = 'flex';
-        }
-        
-        // Close modal
-        function closeModal() {
-            document.getElementById('widgetModal').style.display = 'none';
-        }
-        
-        // Show message info
-        function showMessage(type) {
-            const messages = {
-                'ai': 'This is how the AI responds to your story ideas, remembering previous details and suggesting connections.',
-                'user': 'Your input - just talk naturally about your story. The AI will remember everything you say.'
-            };
-            alert(messages[type]);
-        }
-        
-        // Interactive demo conversation
-        function addUserMessage() {
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            // Add user message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.innerHTML = `
-                <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">You:</div>
-                <div>${message}</div>
-            `;
-            userMsg.onclick = () => showMessage('user');
-            
-            document.getElementById('conversationDemo').appendChild(userMsg);
-            input.value = '';
-            
-            // Simulate AI response
+
+        // Print manuscript
+        function printManuscript() {
+            generatePrintPreview();
             setTimeout(() => {
-                const responses = [
-                    "Fascinating! I've added that to your story archive. What happens next?",
-                    "Great detail! How does this revelation affect your protagonist?",
-                    "Interesting development! What conflict arises from this situation?",
-                    "Perfect! This connects beautifully with your earlier idea about...",
-                    "Noted! I've updated your character profiles with this information.",
-                    "Intriguing! Let me suggest a possible plot twist based on this..."
-                ];
-                
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'message ai';
-                aiMsg.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 5px; color: var(--sienna);">Codex AI:</div>
-                    <div>${responses[Math.floor(Math.random() * responses.length)]}</div>
-                `;
-                aiMsg.onclick = () => showMessage('ai');
-                
-                document.getElementById('conversationDemo').appendChild(aiMsg);
-                
-                // Auto-scroll to bottom
-                document.getElementById('conversationDemo').scrollTop = 
-                    document.getElementById('conversationDemo').scrollHeight;
-            }, 1000);
+                window.print();
+            }, 100);
         }
-        
-        // Interactive features on load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Make Enter key work in input
-            document.getElementById('userInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') addUserMessage();
-            });
+
+        // Clear all data
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                manuscript = {
+                    writing: '',
+                    characters: [],
+                    timeline: [],
+                    scenes: [],
+                    worldbuilding: [],
+                    notes: [],
+                    novelTitle: 'Untitled Manuscript',
+                    authorName: 'Anonymous Writer',
+                    lastSaved: null
+                };
+                
+                mainWritingArea.value = '';
+                document.getElementById('novelTitle').value = 'Untitled Manuscript';
+                document.getElementById('authorName').value = 'Anonymous Writer';
+                charactersContainer.innerHTML = '';
+                timelineContainer.innerHTML = '';
+                activeToolsContainer.innerHTML = '';
+                
+                localStorage.removeItem('quillCodexManuscript');
+                updateCounts();
+                generatePrintPreview();
+                showNotification('All data cleared', 'success');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            notification.style.background = type === 'error' ? 'var(--blood-red)' : 
+                                          type === 'success' ? 'var(--library-green)' : 
+                                          'var(--sepia)';
             
-            // Close modal on background click
-            document.getElementById('widgetModal').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-            
-            // Close fullscreen modal on background click
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('fullscreen-modal')) {
-                    closeFullscreen();
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Load from storage on startup
+        function loadFromStorage() {
+            const saved = localStorage.getItem('quillCodexManuscript');
+            if (saved) {
+                try {
+                    manuscript = JSON.parse(saved);
+                    mainWritingArea.value = manuscript.writing || '';
+                    document.getElementById('novelTitle').value = manuscript.novelTitle || 'Untitled Manuscript';
+                    document.getElementById('authorName').value = manuscript.authorName || 'Anonymous Writer';
+                } catch (e) {
+                    console.error('Error loading saved manuscript:', e);
                 }
-            });
-        });
+            }
+        }
     </script>
 </body>
 </html>
