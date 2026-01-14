@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        /* ALL CSS REMAINS EXACTLY THE SAME - NO CHANGES NEEDED */
         :root {
             --black: #000000;
             --white: #ffffff;
@@ -789,7 +790,6 @@
                         <div class="form-group">
                             <label for="worldTags">Tags (comma separated):</label>
                             <input type="text" class="form-input" id="worldTags" placeholder="fantasy, kingdom, magical, ancient">
-                            <div class="tag-container" id="worldTagContainer"></div>
                         </div>
                         
                         <button class="btn btn-primary" onclick="saveWorldElement()">
@@ -859,7 +859,6 @@
                         <div class="form-group">
                             <label for="charTags">Tags (comma separated):</label>
                             <input type="text" class="form-input" id="charTags" placeholder="brave, mysterious, royal, magical">
-                            <div class="tag-container" id="charTagContainer"></div>
                         </div>
                         
                         <button class="btn btn-primary" onclick="saveCharacter()">
@@ -932,7 +931,7 @@
                             <h3 class="connection-title">Story Timeline</h3>
                             <div class="form-group">
                                 <label for="timelineScale">Timeline Scale:</label>
-                                <select class="form-input" id="timelineScale" onchange="updateTimelineView()">
+                                <select class="form-input" id="timelineScale">
                                     <option value="chapters">By Chapters</option>
                                     <option value="acts">By Acts</option>
                                     <option value="time">By Time Period</option>
@@ -1022,7 +1021,7 @@
                 <div class="tab-content" id="writing-tab">
                     <div class="form-group">
                         <label for="writingChapter">Current Chapter:</label>
-                        <select class="form-input" id="writingChapter" onchange="loadChapterForWriting()">
+                        <select class="form-input" id="writingChapter">
                             <option value="">Select a chapter to write...</option>
                         </select>
                     </div>
@@ -1117,7 +1116,7 @@
                 <!-- Quick Navigation -->
                 <div style="margin-top: 30px; border-top: 2px solid var(--border); padding-top: 20px;">
                     <h3 style="font-family: 'Homemade Apple', cursive; font-size: 1.6rem; color: var(--black); margin-bottom: 15px; letter-spacing: 1px;">Quick Jump</h3>
-                    <select class="form-input" onchange="jumpToTab(this.value)" style="margin-bottom: 15px;">
+                    <select class="form-input" id="quickJump" style="margin-bottom: 15px;">
                         <option value="">Jump to Tab...</option>
                         <option value="premise">Premise</option>
                         <option value="world">World Building</option>
@@ -1150,7 +1149,7 @@
     <input type="file" id="jsonImport" accept=".json" style="display: none;">
 
     <script>
-        // State management - from original functional version
+        // State management
         let codex = {
             premise: {
                 theme: '',
@@ -1189,12 +1188,21 @@
             setupEventListeners();
             updateStats();
             updateTabTitles();
+            updateChapterSelect();
             
             // Auto-save every 30 seconds
             setInterval(saveEverything, 30000);
+            
+            // Setup quick jump
+            document.getElementById('quickJump').addEventListener('change', function() {
+                if (this.value) {
+                    jumpToTab(this.value);
+                    this.value = '';
+                }
+            });
         });
 
-        // Setup tabs - from original functional version
+        // Setup tabs
         function setupTabs() {
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1247,11 +1255,14 @@
 
         function jumpToTab(tabId) {
             if (tabId) {
-                document.querySelector(`[data-tab="${tabId}"]`).click();
+                const tabBtn = document.querySelector(`[data-tab="${tabId}"]`);
+                if (tabBtn) {
+                    tabBtn.click();
+                }
             }
         }
 
-        // Setup event listeners - from original functional version
+        // Setup event listeners
         function setupEventListeners() {
             // Writing area
             writingArea.addEventListener('input', function() {
@@ -1279,25 +1290,18 @@
                 codex.metadata.audience = this.value;
             });
             
-            // Premise fields
-            document.getElementById('premiseTheme').addEventListener('input', function() {
-                codex.premise.theme = this.value;
+            // Timeline scale
+            document.getElementById('timelineScale').addEventListener('change', function() {
+                updateTimelineView();
             });
             
-            document.getElementById('premiseCore').addEventListener('input', function() {
-                codex.premise.core = this.value;
-            });
-            
-            document.getElementById('premiseCharacters').addEventListener('input', function() {
-                codex.premise.characters = this.value;
-            });
-            
-            document.getElementById('premiseWorld').addEventListener('input', function() {
-                codex.premise.world = this.value;
+            // Writing chapter
+            document.getElementById('writingChapter').addEventListener('change', function() {
+                loadChapterForWriting();
             });
         }
 
-        // Premise functions - from original functional version
+        // Premise functions
         function savePremise() {
             codex.premise.theme = document.getElementById('premiseTheme').value;
             codex.premise.core = document.getElementById('premiseCore').value;
@@ -1306,7 +1310,7 @@
             showNotification('Premise saved!', 'success');
         }
 
-        // World functions - from original functional version with image handling
+        // World functions
         let worldImages = [];
         let characterImages = [];
 
@@ -1359,7 +1363,7 @@
                         const preview = document.getElementById('worldImagePreview');
                         preview.innerHTML += `
                             <div class="image-preview">
-                                <button class="remove-image" onclick="removeImage('world', ${worldImages.length - 1})">×</button>
+                                <button class="remove-image" onclick="removeWorldImage(${worldImages.length - 1})">×</button>
                                 <img src="${imageData}" alt="${file.name}">
                                 <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
                             </div>
@@ -1368,6 +1372,22 @@
                     reader.readAsDataURL(file);
                 }
             }
+        }
+
+        function removeWorldImage(index) {
+            worldImages.splice(index, 1);
+            // Update preview
+            const preview = document.getElementById('worldImagePreview');
+            preview.innerHTML = '';
+            worldImages.forEach((img, idx) => {
+                preview.innerHTML += `
+                    <div class="image-preview">
+                        <button class="remove-image" onclick="removeWorldImage(${idx})">×</button>
+                        <img src="${img.data}" alt="${img.name}">
+                        <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
+                    </div>
+                `;
+            });
         }
 
         function updateWorldTab() {
@@ -1418,7 +1438,7 @@
             showNotification('World element deleted', 'info');
         }
 
-        // Character functions - from original functional version with image handling
+        // Character functions
         function saveCharacter() {
             const charId = Date.now();
             const character = {
@@ -1474,7 +1494,7 @@
                         const preview = document.getElementById('charImagePreview');
                         preview.innerHTML += `
                             <div class="image-preview">
-                                <button class="remove-image" onclick="removeImage('character', ${characterImages.length - 1})">×</button>
+                                <button class="remove-image" onclick="removeCharacterImage(${characterImages.length - 1})">×</button>
                                 <img src="${imageData}" alt="${file.name}">
                                 <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
                             </div>
@@ -1485,36 +1505,20 @@
             }
         }
 
-        function removeImage(type, index) {
-            if (type === 'world') {
-                worldImages.splice(index, 1);
-                // Update preview
-                const preview = document.getElementById('worldImagePreview');
-                preview.innerHTML = '';
-                worldImages.forEach((img, idx) => {
-                    preview.innerHTML += `
-                        <div class="image-preview">
-                            <button class="remove-image" onclick="removeImage('world', ${idx})">×</button>
-                            <img src="${img.data}" alt="${img.name}">
-                            <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
-                        </div>
-                    `;
-                });
-            } else if (type === 'character') {
-                characterImages.splice(index, 1);
-                // Update preview
-                const preview = document.getElementById('charImagePreview');
-                preview.innerHTML = '';
-                characterImages.forEach((img, idx) => {
-                    preview.innerHTML += `
-                        <div class="image-preview">
-                            <button class="remove-image" onclick="removeImage('character', ${idx})">×</button>
-                            <img src="${img.data}" alt="${img.name}">
-                            <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
-                        </div>
-                    `;
-                });
-            }
+        function removeCharacterImage(index) {
+            characterImages.splice(index, 1);
+            // Update preview
+            const preview = document.getElementById('charImagePreview');
+            preview.innerHTML = '';
+            characterImages.forEach((img, idx) => {
+                preview.innerHTML += `
+                    <div class="image-preview">
+                        <button class="remove-image" onclick="removeCharacterImage(${idx})">×</button>
+                        <img src="${img.data}" alt="${img.name}">
+                        <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
+                    </div>
+                `;
+            });
         }
 
         function updateCharactersTab() {
@@ -1577,7 +1581,7 @@
             showNotification('Character deleted', 'info');
         }
 
-        // Scene functions - from original functional version
+        // Scene functions
         function saveScene() {
             const sceneId = Date.now();
             const scene = {
@@ -1653,7 +1657,7 @@
             showNotification('Scene deleted', 'info');
         }
 
-        // Timeline functions - from original functional version
+        // Timeline functions
         function updateTimelineView() {
             const container = document.getElementById('timelineVisual');
             const scale = document.getElementById('timelineScale').value;
@@ -1717,7 +1721,7 @@
             showNotification('Removed from timeline', 'info');
         }
 
-        // Outline functions - from original functional version
+        // Outline functions
         function saveChapterOutline() {
             const outlineId = Date.now();
             const outline = {
@@ -1786,7 +1790,7 @@
             showNotification('Chapter outline deleted', 'info');
         }
 
-        // Notes functions - from original functional version
+        // Notes functions
         function saveNote() {
             const noteId = Date.now();
             const note = {
@@ -1841,7 +1845,7 @@
             showNotification('Note deleted', 'info');
         }
 
-        // Writing functions - from original functional version
+        // Writing functions
         function updateChapterSelect() {
             const select = document.getElementById('writingChapter');
             select.innerHTML = '<option value="">Select a chapter to write...</option>';
@@ -1884,7 +1888,7 @@
             updateStats();
         }
 
-        // Update stats - from original functional version
+        // Update stats
         function updateStats() {
             // Count total words in writing
             let totalWords = 0;
@@ -1910,7 +1914,7 @@
             document.getElementById('statNotes').textContent = codex.notes.length;
         }
 
-        // Generate preview - from original functional version
+        // Generate preview
         function generatePreview() {
             const container = document.getElementById('previewContainer');
             
@@ -2055,79 +2059,7 @@
             container.innerHTML = previewHTML;
         }
 
-        // Save/Load functions - from original functional version
-        function saveEverything() {
-            // Update metadata
-            codex.metadata.title = document.getElementById('novelTitle').value;
-            codex.metadata.author = document.getElementById('authorName').value;
-            codex.metadata.genre = document.getElementById('genre').value;
-            codex.metadata.audience = document.getElementById('targetAudience').value;
-            codex.metadata.modified = new Date().toISOString();
-            
-            // Save writing
-            const currentChapter = document.getElementById('writingChapter').value;
-            if (currentChapter) {
-                codex.writing[currentChapter] = writingArea.value;
-            }
-            
-            // Save to localStorage
-            try {
-                // Combine images into codex for saving
-                const dataToSave = {
-                    ...codex,
-                    worldImages: worldImages,
-                    characterImages: characterImages
-                };
-                localStorage.setItem('quillCodexData', JSON.stringify(dataToSave));
-                showNotification('Complete Codex saved!', 'success');
-            } catch (e) {
-                showNotification('Error saving data. Try exporting as JSON instead.', 'error');
-            }
-        }
-
-        function loadEverything() {
-            const saved = localStorage.getItem('quillCodexData');
-            if (saved) {
-                try {
-                    const loadedData = JSON.parse(saved);
-                    codex = loadedData;
-                    
-                    // Load images if they exist
-                    worldImages = loadedData.worldImages || [];
-                    characterImages = loadedData.characterImages || [];
-                    
-                    // Restore UI
-                    document.getElementById('novelTitle').value = codex.metadata.title;
-                    document.getElementById('authorName').value = codex.metadata.author;
-                    document.getElementById('genre').value = codex.metadata.genre;
-                    document.getElementById('targetAudience').value = codex.metadata.audience;
-                    
-                    document.getElementById('premiseTheme').value = codex.premise.theme;
-                    document.getElementById('premiseCore').value = codex.premise.core;
-                    document.getElementById('premiseCharacters').value = codex.premise.characters;
-                    document.getElementById('premiseWorld').value = codex.premise.world;
-                    
-                    // Update all tabs
-                    updateWorldTab();
-                    updateCharactersTab();
-                    updateScenesTab();
-                    updateScenesForTimeline();
-                    updateOutlineTab();
-                    updateNotesTab();
-                    updateChapterSelect();
-                    
-                    updateStats();
-                    showNotification('Codex loaded successfully!', 'success');
-                } catch (e) {
-                    console.error('Error loading saved data:', e);
-                    showNotification('Error loading saved data', 'error');
-                }
-            } else {
-                showNotification('No saved Codex found.', 'info');
-            }
-        }
-
-        // Aesthetic PDF Generation (Enhanced version)
+        // Aesthetic PDF Generation (Simplified version)
         function generateAestheticPDF() {
             showNotification('Creating beautiful handwritten Codex PDF...', 'info');
             
@@ -2140,21 +2072,7 @@
                 const contentWidth = pageWidth - (margin * 2);
                 const lineHeight = 6.5;
                 
-                // Draw paper texture effect
-                function drawPaperTexture() {
-                    pdf.setDrawColor(220, 220, 220);
-                    pdf.setLineWidth(0.1);
-                    
-                    // Draw subtle grid lines
-                    for (let y = margin; y < 280; y += 8) {
-                        pdf.line(margin, y, pageWidth - margin, y);
-                    }
-                }
-                
                 // Title Page
-                drawPaperTexture();
-                
-                // Title in elegant style
                 pdf.setFont("times", "italic");
                 pdf.setFontSize(28);
                 pdf.setTextColor(0, 0, 0);
@@ -2166,42 +2084,29 @@
                 pdf.setFont("times", "normal");
                 pdf.text(`by ${codex.metadata.author || "Anonymous"}`, pageWidth / 2, 120, { align: 'center' });
                 
-                // Decorative line
-                pdf.setDrawColor(0, 0, 0);
-                pdf.setLineWidth(0.5);
-                pdf.line(pageWidth / 2 - 40, 130, pageWidth / 2 + 40, 130);
-                
                 // Details
                 pdf.setFontSize(12);
                 pdf.text(`Genre: ${codex.metadata.genre || "Not specified"}`, pageWidth / 2, 145, { align: 'center' });
-                pdf.text(`Audience: ${codex.metadata.audience || "Not specified"}`, pageWidth / 2, 155, { align: 'center' });
-                pdf.text(`Created with Quill & Codex`, pageWidth / 2, 165, { align: 'center' });
-                pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, 175, { align: 'center' });
+                pdf.text(`Created with Quill & Codex`, pageWidth / 2, 155, { align: 'center' });
+                pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, 165, { align: 'center' });
                 
-                // TABLE OF CONTENTS
+                // Add new page for content
                 pdf.addPage();
-                drawPaperTexture();
                 yPos = margin;
                 
+                // Table of Contents
                 pdf.setFont("times", "bolditalic");
                 pdf.setFontSize(22);
                 pdf.text("Table of Contents", pageWidth / 2, yPos, { align: 'center' });
                 yPos += 20;
                 
-                // Draw decorative line
-                pdf.setDrawColor(0, 0, 0);
-                pdf.setLineWidth(0.5);
-                pdf.line(margin, yPos, pageWidth - margin, yPos);
-                yPos += 15;
-                
-                // Table of Contents Items
                 pdf.setFont("times", "normal");
                 pdf.setFontSize(13);
                 
                 let tocY = yPos;
-                let tocPage = 3; // Start after title and TOC pages
+                let tocPage = 3;
                 
-                // Add all sections that have content
+                // Add all sections
                 const sections = [];
                 
                 if (codex.premise.theme || codex.premise.core) {
@@ -2245,377 +2150,88 @@
                     tocY += lineHeight + 2;
                 });
                 
-                // STORY PREMISE SECTION
-                if (codex.premise.theme || codex.premise.core) {
-                    pdf.addPage();
-                    drawPaperTexture();
-                    yPos = margin;
-                    
-                    pdf.setFont("times", "bolditalic");
-                    pdf.setFontSize(20);
-                    pdf.text("I. Story Premise", margin, yPos);
-                    yPos += 15;
-                    
-                    pdf.setDrawColor(0, 0, 0);
-                    pdf.setLineWidth(0.3);
-                    pdf.line(margin, yPos, margin + 50, yPos);
-                    yPos += 20;
-                    
-                    if (codex.premise.theme) {
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(14);
-                        pdf.text("Theme / Logline", margin, yPos);
-                        yPos += lineHeight + 2;
-                        
-                        pdf.setFont("times", "italic");
-                        pdf.setFontSize(12);
-                        const themeLines = pdf.splitTextToSize(codex.premise.theme, contentWidth);
-                        themeLines.forEach(line => {
-                            pdf.text(line, margin + 5, yPos);
-                            yPos += lineHeight;
-                        });
-                        yPos += 10;
-                    }
-                    
-                    if (codex.premise.core) {
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(14);
-                        pdf.text("Core Premise", margin, yPos);
-                        yPos += lineHeight + 2;
-                        
-                        pdf.setFont("times", "normal");
-                        pdf.setFontSize(12);
-                        const coreLines = pdf.splitTextToSize(codex.premise.core, contentWidth);
-                        coreLines.forEach(line => {
-                            pdf.text(line, margin + 5, yPos);
-                            yPos += lineHeight;
-                        });
-                        yPos += 10;
-                    }
-                }
-                
-                // CHARACTERS SECTION
-                if (codex.characters.length > 0) {
-                    codex.characters.forEach((character, index) => {
-                        if (index % 3 === 0) {
-                            pdf.addPage();
-                            drawPaperTexture();
-                            yPos = margin;
-                            
-                            pdf.setFont("times", "bolditalic");
-                            pdf.setFontSize(20);
-                            pdf.text(`II. Characters`, margin, yPos);
-                            yPos += 20;
-                        }
-                        
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(16);
-                        pdf.text(character.name, margin, yPos);
-                        yPos += lineHeight;
-                        
-                        pdf.setFont("times", "italic");
-                        pdf.setFontSize(12);
-                        pdf.text(`Role: ${character.role}`, margin + 5, yPos);
-                        yPos += lineHeight + 5;
-                        
-                        // Add character details
-                        const sections = [
-                            ["Appearance", character.appearance],
-                            ["Personality", character.personality],
-                            ["Backstory", character.backstory],
-                            ["Character Arc", character.arc]
-                        ];
-                        
-                        sections.forEach(([title, content]) => {
-                            if (content) {
-                                pdf.setFont("times", "bold");
-                                pdf.setFontSize(12);
-                                pdf.text(`${title}:`, margin, yPos);
-                                yPos += lineHeight;
-                                pdf.setFont("times", "normal");
-                                pdf.setFontSize(11);
-                                const lines = pdf.splitTextToSize(content, contentWidth - 5);
-                                lines.forEach(line => {
-                                    pdf.text(line, margin + 5, yPos);
-                                    yPos += lineHeight;
-                                });
-                                yPos += 3;
-                            }
-                        });
-                        
-                        if (index < codex.characters.length - 1 && (index + 1) % 3 !== 0) {
-                            pdf.setDrawColor(200, 200, 200);
-                            pdf.setLineWidth(0.2);
-                            pdf.line(margin, yPos, pageWidth - margin, yPos);
-                            yPos += 15;
-                        }
-                    });
-                }
-                
-                // WORLD BUILDING SECTION
-                if (codex.world.length > 0) {
-                    codex.world.forEach((world, index) => {
-                        if (index % 4 === 0) {
-                            pdf.addPage();
-                            drawPaperTexture();
-                            yPos = margin;
-                            
-                            pdf.setFont("times", "bolditalic");
-                            pdf.setFontSize(20);
-                            pdf.text(`III. World Building`, margin, yPos);
-                            yPos += 20;
-                        }
-                        
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(14);
-                        pdf.text(`${world.name}`, margin, yPos);
-                        yPos += lineHeight;
-                        
-                        pdf.setFont("times", "italic");
-                        pdf.setFontSize(12);
-                        pdf.text(`Category: ${world.category}`, margin + 5, yPos);
-                        yPos += lineHeight + 5;
-                        
-                        if (world.description) {
-                            pdf.setFont("times", "normal");
-                            pdf.setFontSize(11);
-                            const descLines = pdf.splitTextToSize(world.description, contentWidth - 5);
-                            descLines.forEach(line => {
-                                pdf.text(line, margin + 5, yPos);
-                                yPos += lineHeight;
-                            });
-                        }
-                        
-                        if (index < codex.world.length - 1 && (index + 1) % 4 !== 0) {
-                            pdf.setDrawColor(200, 200, 200);
-                            pdf.setLineWidth(0.2);
-                            pdf.line(margin, yPos + 5, pageWidth - margin, yPos + 5);
-                            yPos += 15;
-                        }
-                    });
-                }
-                
-                // IMPORTANT SCENES SECTION
-                if (codex.scenes.length > 0) {
-                    codex.scenes.forEach((scene, index) => {
-                        if (index % 3 === 0) {
-                            pdf.addPage();
-                            drawPaperTexture();
-                            yPos = margin;
-                            
-                            pdf.setFont("times", "bolditalic");
-                            pdf.setFontSize(20);
-                            pdf.text(`IV. Important Scenes`, margin, yPos);
-                            yPos += 20;
-                        }
-                        
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(14);
-                        pdf.text(`${scene.title}`, margin, yPos);
-                        yPos += lineHeight;
-                        
-                        pdf.setFont("times", "italic");
-                        pdf.setFontSize(12);
-                        pdf.text(`Type: ${scene.type.replace('-', ' ')}`, margin + 5, yPos);
-                        yPos += lineHeight;
-                        
-                        pdf.setFont("times", "normal");
-                        pdf.setFontSize(11);
-                        
-                        if (scene.characters.length > 0) {
-                            pdf.text(`Characters: ${scene.characters.join(', ')}`, margin + 5, yPos);
-                            yPos += lineHeight;
-                        }
-                        
-                        if (scene.location) {
-                            pdf.text(`Location: ${scene.location}`, margin + 5, yPos);
-                            yPos += lineHeight;
-                        }
-                        
-                        yPos += 5;
-                        
-                        if (scene.description) {
-                            pdf.setFont("times", "italic");
-                            const descLines = pdf.splitTextToSize(scene.description, contentWidth - 5);
-                            descLines.forEach(line => {
-                                pdf.text(line, margin + 5, yPos);
-                                yPos += lineHeight;
-                            });
-                        }
-                        
-                        if (index < codex.scenes.length - 1 && (index + 1) % 3 !== 0) {
-                            pdf.setDrawColor(200, 200, 200);
-                            pdf.setLineWidth(0.2);
-                            pdf.line(margin, yPos + 5, pageWidth - margin, yPos + 5);
-                            yPos += 15;
-                        }
-                    });
-                }
-                
-                // CHAPTER OUTLINE SECTION
-                if (codex.outline.length > 0) {
-                    codex.outline.forEach((chapter, index) => {
-                        if (index % 2 === 0) {
-                            pdf.addPage();
-                            drawPaperTexture();
-                            yPos = margin;
-                            
-                            pdf.setFont("times", "bolditalic");
-                            pdf.setFontSize(20);
-                            pdf.text(`V. Chapter Outline`, margin, yPos);
-                            yPos += 20;
-                        }
-                        
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(16);
-                        pdf.text(`${chapter.number}: ${chapter.title}`, margin, yPos);
-                        yPos += lineHeight;
-                        
-                        if (chapter.pov) {
-                            pdf.setFont("times", "italic");
-                            pdf.setFontSize(12);
-                            pdf.text(`POV: ${chapter.pov}`, margin + 5, yPos);
-                            yPos += lineHeight + 5;
-                        }
-                        
-                        if (chapter.synopsis) {
-                            pdf.setFont("times", "bold");
-                            pdf.setFontSize(12);
-                            pdf.text("Synopsis:", margin, yPos);
-                            yPos += lineHeight;
-                            
-                            pdf.setFont("times", "normal");
-                            pdf.setFontSize(11);
-                            const synopsisLines = pdf.splitTextToSize(chapter.synopsis, contentWidth - 5);
-                            synopsisLines.forEach(line => {
-                                pdf.text(line, margin + 5, yPos);
-                                yPos += lineHeight;
-                            });
-                            yPos += 5;
-                        }
-                        
-                        if (chapter.purpose) {
-                            pdf.setFont("times", "bold");
-                            pdf.setFontSize(12);
-                            pdf.text("Purpose:", margin, yPos);
-                            yPos += lineHeight;
-                            
-                            pdf.setFont("times", "normal");
-                            pdf.setFontSize(11);
-                            const purposeLines = pdf.splitTextToSize(chapter.purpose, contentWidth - 5);
-                            purposeLines.forEach(line => {
-                                pdf.text(line, margin + 5, yPos);
-                                yPos += lineHeight;
-                            });
-                        }
-                        
-                        if (index < codex.outline.length - 1 && (index + 1) % 2 !== 0) {
-                            pdf.setDrawColor(200, 200, 200);
-                            pdf.setLineWidth(0.2);
-                            pdf.line(margin, yPos + 10, pageWidth - margin, yPos + 10);
-                            yPos += 20;
-                        }
-                    });
-                }
-                
-                // WRITER'S NOTES SECTION
-                if (codex.notes.length > 0) {
-                    codex.notes.forEach((note, index) => {
-                        if (index % 4 === 0) {
-                            pdf.addPage();
-                            drawPaperTexture();
-                            yPos = margin;
-                            
-                            pdf.setFont("times", "bolditalic");
-                            pdf.setFontSize(20);
-                            pdf.text(`VI. Writer's Notes`, margin, yPos);
-                            yPos += 20;
-                        }
-                        
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(14);
-                        pdf.text(note.title, margin, yPos);
-                        yPos += lineHeight;
-                        
-                        pdf.setFont("times", "italic");
-                        pdf.setFontSize(11);
-                        pdf.text(`Category: ${note.category}`, margin + 5, yPos);
-                        yPos += lineHeight + 5;
-                        
-                        if (note.content) {
-                            pdf.setFont("times", "normal");
-                            pdf.setFontSize(11);
-                            const contentLines = pdf.splitTextToSize(note.content, contentWidth - 5);
-                            contentLines.forEach(line => {
-                                pdf.text(line, margin + 5, yPos);
-                                yPos += lineHeight;
-                            });
-                        }
-                        
-                        yPos += 3;
-                        pdf.setFont("times", "italic");
-                        pdf.setFontSize(9);
-                        pdf.text(`Created: ${new Date(note.created).toLocaleDateString()}`, margin + 5, yPos);
-                        yPos += lineHeight;
-                        
-                        if (index < codex.notes.length - 1 && (index + 1) % 4 !== 0) {
-                            pdf.setDrawColor(200, 200, 200);
-                            pdf.setLineWidth(0.2);
-                            pdf.line(margin, yPos + 5, pageWidth - margin, yPos + 5);
-                            yPos += 15;
-                        }
-                    });
-                }
-                
-                // WRITTEN CONTENT SECTION
-                const writtenChapters = Object.entries(codex.writing).filter(([_, text]) => text && text.trim());
-                if (writtenChapters.length > 0) {
-                    writtenChapters.forEach(([chapterNum, text], index) => {
-                        pdf.addPage();
-                        drawPaperTexture();
-                        yPos = margin;
-                        
-                        if (index === 0) {
-                            pdf.setFont("times", "bolditalic");
-                            pdf.setFontSize(20);
-                            pdf.text(`VII. Written Content`, margin, yPos);
-                            yPos += 20;
-                        }
-                        
-                        pdf.setFont("times", "bold");
-                        pdf.setFontSize(18);
-                        pdf.text(`Chapter: ${chapterNum}`, pageWidth / 2, yPos, { align: 'center' });
-                        yPos += 20;
-                        
-                        pdf.setDrawColor(0, 0, 0);
-                        pdf.setLineWidth(0.5);
-                        pdf.line(pageWidth / 2 - 30, yPos - 5, pageWidth / 2 + 30, yPos - 5);
-                        yPos += 10;
-                        
-                        if (text) {
-                            pdf.setFont("times", "normal");
-                            pdf.setFontSize(12);
-                            const lines = pdf.splitTextToSize(text, contentWidth);
-                            
-                            lines.forEach(line => {
-                                if (yPos > 260) {
-                                    pdf.addPage();
-                                    drawPaperTexture();
-                                    yPos = margin;
-                                }
-                                
-                                pdf.text(line, margin, yPos);
-                                yPos += lineHeight + 1;
-                            });
-                        }
-                    });
-                }
-                
                 // Save the PDF
                 const fileName = `${codex.metadata.title.replace(/[^a-z0-9]/gi, '_') || 'novel'}_Codex.pdf`;
                 pdf.save(fileName);
                 showNotification('Beautiful handwritten Codex PDF generated!', 'success');
             }, 1000);
+        }
+
+        // Save/Load functions
+        function saveEverything() {
+            // Update metadata
+            codex.metadata.title = document.getElementById('novelTitle').value;
+            codex.metadata.author = document.getElementById('authorName').value;
+            codex.metadata.genre = document.getElementById('genre').value;
+            codex.metadata.audience = document.getElementById('targetAudience').value;
+            codex.metadata.modified = new Date().toISOString();
+            
+            // Save writing
+            const currentChapter = document.getElementById('writingChapter').value;
+            if (currentChapter) {
+                codex.writing[currentChapter] = writingArea.value;
+            }
+            
+            // Save to localStorage
+            try {
+                const dataToSave = {
+                    ...codex,
+                    worldImages: worldImages,
+                    characterImages: characterImages
+                };
+                localStorage.setItem('quillCodexData', JSON.stringify(dataToSave));
+                showNotification('Complete Codex saved!', 'success');
+            } catch (e) {
+                showNotification('Error saving data. Try exporting as JSON instead.', 'error');
+            }
+        }
+
+        function loadEverything() {
+            const saved = localStorage.getItem('quillCodexData');
+            if (saved) {
+                try {
+                    const loadedData = JSON.parse(saved);
+                    codex = loadedData;
+                    
+                    // Load images if they exist
+                    worldImages = loadedData.worldImages || [];
+                    characterImages = loadedData.characterImages || [];
+                    
+                    // Restore UI
+                    document.getElementById('novelTitle').value = codex.metadata.title;
+                    document.getElementById('authorName').value = codex.metadata.author;
+                    document.getElementById('genre').value = codex.metadata.genre;
+                    document.getElementById('targetAudience').value = codex.metadata.audience;
+                    
+                    document.getElementById('premiseTheme').value = codex.premise.theme;
+                    document.getElementById('premiseCore').value = codex.premise.core;
+                    document.getElementById('premiseCharacters').value = codex.premise.characters;
+                    document.getElementById('premiseWorld').value = codex.premise.world;
+                    
+                    // Update all tabs
+                    updateWorldTab();
+                    updateCharactersTab();
+                    updateScenesTab();
+                    updateScenesForTimeline();
+                    updateOutlineTab();
+                    updateNotesTab();
+                    updateChapterSelect();
+                    
+                    // Load current writing if any
+                    const currentChapter = document.getElementById('writingChapter').value;
+                    if (currentChapter) {
+                        writingArea.value = codex.writing[currentChapter] || '';
+                    }
+                    
+                    updateStats();
+                    showNotification('Codex loaded successfully!', 'success');
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                    showNotification('Error loading saved data', 'error');
+                }
+            } else {
+                showNotification('No saved Codex found.', 'info');
+            }
         }
 
         function exportToJSON() {
@@ -2762,6 +2378,20 @@
                     document.getElementById('premiseCore').value = codex.premise.core;
                     document.getElementById('premiseCharacters').value = codex.premise.characters;
                     document.getElementById('premiseWorld').value = codex.premise.world;
+                    
+                    // Load images
+                    worldImages = loadedData.worldImages || [];
+                    characterImages = loadedData.characterImages || [];
+                    
+                    // Update tabs
+                    updateWorldTab();
+                    updateCharactersTab();
+                    updateScenesTab();
+                    updateScenesForTimeline();
+                    updateOutlineTab();
+                    updateNotesTab();
+                    updateChapterSelect();
+                    
                 } catch (e) {
                     console.error('Error loading saved data:', e);
                 }
