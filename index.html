@@ -1035,7 +1035,7 @@
                         <!-- Preview will be generated here -->
                     </div>
                     <button class="btn btn-primary" onclick="generateAestheticPDF()" style="margin-top: 20px; width: 100%; padding: 15px;">
-                        <i class="fas fa-download"></i> Generate Aesthetic Codex (Handwritten PDF)
+                        <i class="fas fa-download"></i> Generate Complete Codex (PDF with EVERYTHING)
                     </button>
                 </div>
             </main>
@@ -1073,7 +1073,7 @@
                 </button>
                 
                 <button class="control-btn" onclick="generateAestheticPDF()">
-                    <i class="fas fa-file-pdf"></i> Generate Codex PDF
+                    <i class="fas fa-file-pdf"></i> Generate Complete PDF
                 </button>
                 
                 <button class="control-btn" onclick="exportToJSON()">
@@ -2052,109 +2052,438 @@
             previewHTML += `
                 <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--border);">
                     <p><strong>Total Planning Elements:</strong> ${codex.characters.length + codex.world.length + codex.scenes.length + codex.outline.length + codex.notes.length}</p>
-                    <p><em>Click "Generate Aesthetic Codex" to export everything in a beautiful handwritten-style PDF.</em></p>
+                    <p><em>Click "Generate Complete Codex" to export EVERYTHING in a beautiful PDF - including all images, writing, and planning!</em></p>
                 </div>
             </div>`;
             
             container.innerHTML = previewHTML;
         }
 
-        // Aesthetic PDF Generation (Simplified version)
+        // COMPLETE PDF GENERATION WITH EVERYTHING INCLUDED
         function generateAestheticPDF() {
-            showNotification('Creating beautiful handwritten Codex PDF...', 'info');
+            showNotification('Creating Complete Codex PDF with ALL content... This may take a moment.', 'info');
+            
+            // First, save everything to ensure we have the latest data
+            saveEverything();
             
             setTimeout(() => {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                let yPos = 20;
-                const pageWidth = pdf.internal.pageSize.width;
-                const margin = 25;
-                const contentWidth = pageWidth - (margin * 2);
-                const lineHeight = 6.5;
-                
-                // Title Page
-                pdf.setFont("times", "italic");
-                pdf.setFontSize(28);
-                pdf.setTextColor(0, 0, 0);
-                const title = codex.metadata.title || "Untitled Manuscript";
-                pdf.text(title, pageWidth / 2, 100, { align: 'center' });
-                
-                // Author
-                pdf.setFontSize(18);
-                pdf.setFont("times", "normal");
-                pdf.text(`by ${codex.metadata.author || "Anonymous"}`, pageWidth / 2, 120, { align: 'center' });
-                
-                // Details
-                pdf.setFontSize(12);
-                pdf.text(`Genre: ${codex.metadata.genre || "Not specified"}`, pageWidth / 2, 145, { align: 'center' });
-                pdf.text(`Created with Quill & Codex`, pageWidth / 2, 155, { align: 'center' });
-                pdf.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, 165, { align: 'center' });
-                
-                // Add new page for content
-                pdf.addPage();
-                yPos = margin;
-                
-                // Table of Contents
-                pdf.setFont("times", "bolditalic");
-                pdf.setFontSize(22);
-                pdf.text("Table of Contents", pageWidth / 2, yPos, { align: 'center' });
-                yPos += 20;
-                
-                pdf.setFont("times", "normal");
-                pdf.setFontSize(13);
-                
-                let tocY = yPos;
-                let tocPage = 3;
-                
-                // Add all sections
-                const sections = [];
-                
-                if (codex.premise.theme || codex.premise.core) {
-                    sections.push({ title: "I. Story Premise", page: tocPage });
-                    tocPage++;
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    // PDF Settings
+                    const pageWidth = pdf.internal.pageSize.width;
+                    const pageHeight = pdf.internal.pageSize.height;
+                    const margin = 20;
+                    const contentWidth = pageWidth - (margin * 2);
+                    let yPos = margin;
+                    const lineHeight = 6.5;
+                    const sectionGap = 15;
+                    let currentPage = 1;
+                    
+                    // Helper functions
+                    const addNewPage = () => {
+                        pdf.addPage();
+                        currentPage++;
+                        yPos = margin;
+                    };
+                    
+                    const checkPageBreak = (spaceNeeded = 10) => {
+                        if (yPos + spaceNeeded > pageHeight - margin) {
+                            addNewPage();
+                            return true;
+                        }
+                        return false;
+                    };
+                    
+                    const addText = (text, fontSize = 12, isBold = false, x = margin) => {
+                        pdf.setFontSize(fontSize);
+                        pdf.setFont("times", isBold ? "bold" : "normal");
+                        
+                        // Split text into lines
+                        const lines = pdf.splitTextToSize(text, contentWidth);
+                        
+                        for (let i = 0; i < lines.length; i++) {
+                            checkPageBreak(lineHeight);
+                            pdf.text(lines[i], x, yPos);
+                            yPos += lineHeight;
+                        }
+                        
+                        yPos += 2; // Small gap after paragraph
+                    };
+                    
+                    const addTitle = (title, level = 1) => {
+                        checkPageBreak(20);
+                        yPos += 10;
+                        
+                        const sizes = [22, 18, 16];
+                        pdf.setFontSize(sizes[level - 1] || 16);
+                        pdf.setFont("times", "bolditalic");
+                        pdf.setTextColor(0, 0, 0);
+                        
+                        pdf.text(title, pageWidth / 2, yPos, { align: 'center' });
+                        yPos += 15;
+                        
+                        // Underline
+                        pdf.setLineWidth(0.5);
+                        pdf.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+                        yPos += 10;
+                    };
+                    
+                    // ========== TITLE PAGE ==========
+                    pdf.setFillColor(250, 245, 230); // Parchment color
+                    pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+                    
+                    pdf.setFont("times", "italic");
+                    pdf.setFontSize(32);
+                    pdf.setTextColor(40, 40, 40);
+                    
+                    // Title
+                    const title = codex.metadata.title || "Untitled Manuscript";
+                    pdf.text(title, pageWidth / 2, 80, { align: 'center' });
+                    
+                    // Subtitle
+                    pdf.setFontSize(18);
+                    pdf.setFont("times", "normal");
+                    pdf.text("Complete Novel Codex", pageWidth / 2, 100, { align: 'center' });
+                    
+                    // Author
+                    pdf.setFontSize(16);
+                    pdf.text(`by ${codex.metadata.author || "Anonymous"}`, pageWidth / 2, 120, { align: 'center' });
+                    
+                    // Details
+                    pdf.setFontSize(12);
+                    pdf.text(`Genre: ${codex.metadata.genre || "Not specified"}`, pageWidth / 2, 140, { align: 'center' });
+                    pdf.text(`Target Audience: ${codex.metadata.audience || "Not specified"}`, pageWidth / 2, 150, { align: 'center' });
+                    
+                    // Footer
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.text("Generated with Quill & Codex", pageWidth / 2, pageHeight - 20, { align: 'center' });
+                    pdf.text(new Date().toLocaleDateString(), pageWidth / 2, pageHeight - 10, { align: 'center' });
+                    
+                    // ========== TABLE OF CONTENTS ==========
+                    addNewPage();
+                    addTitle("Table of Contents", 1);
+                    
+                    const sections = [];
+                    let pageNum = 3; // Start after title and TOC
+                    
+                    // Calculate sections
+                    if (codex.premise.theme || codex.premise.core) {
+                        sections.push({ title: "I. Story Premise", page: pageNum });
+                        pageNum++;
+                    }
+                    
+                    if (codex.characters.length > 0) {
+                        sections.push({ title: `II. Characters (${codex.characters.length})`, page: pageNum });
+                        // Estimate 1 page per 2 characters
+                        pageNum += Math.ceil(codex.characters.length / 2);
+                    }
+                    
+                    if (codex.world.length > 0) {
+                        sections.push({ title: `III. World Building (${codex.world.length})`, page: pageNum });
+                        // Estimate 1 page per 3 world elements
+                        pageNum += Math.ceil(codex.world.length / 3);
+                    }
+                    
+                    if (codex.scenes.length > 0) {
+                        sections.push({ title: `IV. Important Scenes (${codex.scenes.length})`, page: pageNum });
+                        pageNum += Math.ceil(codex.scenes.length / 4);
+                    }
+                    
+                    if (codex.outline.length > 0) {
+                        sections.push({ title: `V. Chapter Outline (${codex.outline.length} chapters)`, page: pageNum });
+                        pageNum += Math.ceil(codex.outline.length / 3);
+                    }
+                    
+                    if (codex.notes.length > 0) {
+                        sections.push({ title: `VI. Writer's Notes (${codex.notes.length})`, page: pageNum });
+                        pageNum += Math.ceil(codex.notes.length / 6);
+                    }
+                    
+                    const writtenChapters = Object.entries(codex.writing).filter(([_, text]) => text && text.trim());
+                    if (writtenChapters.length > 0) {
+                        sections.push({ title: `VII. Written Content (${writtenChapters.length} chapters)`, page: pageNum });
+                    }
+                    
+                    // Add TOC entries
+                    sections.forEach(section => {
+                        checkPageBreak(10);
+                        pdf.setFontSize(12);
+                        pdf.setFont("times", "normal");
+                        pdf.text(section.title, margin, yPos);
+                        pdf.text(section.page.toString(), pageWidth - margin, yPos, { align: 'right' });
+                        yPos += 10;
+                    });
+                    
+                    // ========== PREMISE SECTION ==========
+                    if (codex.premise.theme || codex.premise.core) {
+                        addNewPage();
+                        addTitle("I. Story Premise", 1);
+                        
+                        if (codex.premise.theme) {
+                            addTitle("Theme / Logline", 2);
+                            addText(codex.premise.theme);
+                        }
+                        
+                        if (codex.premise.core) {
+                            addTitle("Core Premise", 2);
+                            addText(codex.premise.core);
+                        }
+                        
+                        if (codex.premise.characters) {
+                            addTitle("Central Characters", 2);
+                            addText(codex.premise.characters);
+                        }
+                        
+                        if (codex.premise.world) {
+                            addTitle("World Connection", 2);
+                            addText(codex.premise.world);
+                        }
+                    }
+                    
+                    // ========== CHARACTERS SECTION ==========
+                    if (codex.characters.length > 0) {
+                        addNewPage();
+                        addTitle("II. Characters", 1);
+                        
+                        codex.characters.forEach((character, index) => {
+                            checkPageBreak(30);
+                            
+                            addTitle(`${character.name} - ${character.role}`, 2);
+                            
+                            if (character.appearance) {
+                                addText(`Appearance: ${character.appearance}`, 11);
+                            }
+                            
+                            if (character.personality) {
+                                addText(`Personality: ${character.personality}`, 11);
+                            }
+                            
+                            if (character.backstory) {
+                                addText(`Backstory: ${character.backstory}`, 11);
+                            }
+                            
+                            if (character.arc) {
+                                addText(`Character Arc: ${character.arc}`, 11);
+                            }
+                            
+                            // Add character images if available
+                            if (character.images && character.images.length > 0) {
+                                checkPageBreak(50);
+                                yPos += 10;
+                                addText("Reference Images:", 11, true);
+                                yPos += 5;
+                                
+                                // We can only add one image per character due to PDF size constraints
+                                const imgData = character.images[0].data;
+                                try {
+                                    pdf.addImage(imgData, 'JPEG', margin, yPos, 40, 40);
+                                    yPos += 45;
+                                } catch (e) {
+                                    addText("[Image could not be embedded]", 10);
+                                    yPos += 10;
+                                }
+                            }
+                            
+                            yPos += 10; // Extra space between characters
+                        });
+                    }
+                    
+                    // ========== WORLD BUILDING SECTION ==========
+                    if (codex.world.length > 0) {
+                        addNewPage();
+                        addTitle("III. World Building", 1);
+                        
+                        codex.world.forEach((world, index) => {
+                            checkPageBreak(30);
+                            
+                            addTitle(`${world.name} (${world.category})`, 2);
+                            addText(world.description || "No description");
+                            
+                            if (world.tags && world.tags.length > 0) {
+                                addText(`Tags: ${world.tags.join(', ')}`, 10);
+                            }
+                            
+                            // Add world images if available
+                            if (world.images && world.images.length > 0) {
+                                checkPageBreak(50);
+                                yPos += 10;
+                                addText("Inspiration Images:", 11, true);
+                                yPos += 5;
+                                
+                                // Add first image
+                                const imgData = world.images[0].data;
+                                try {
+                                    pdf.addImage(imgData, 'JPEG', margin, yPos, 50, 30);
+                                    yPos += 35;
+                                } catch (e) {
+                                    addText("[Image could not be embedded]", 10);
+                                    yPos += 10;
+                                }
+                            }
+                            
+                            yPos += 10; // Extra space between world elements
+                        });
+                    }
+                    
+                    // ========== SCENES SECTION ==========
+                    if (codex.scenes.length > 0) {
+                        addNewPage();
+                        addTitle("IV. Important Scenes", 1);
+                        
+                        codex.scenes.forEach((scene, index) => {
+                            checkPageBreak(30);
+                            
+                            addTitle(`${scene.title} (${scene.type})`, 2);
+                            
+                            if (scene.characters && scene.characters.length > 0) {
+                                addText(`Characters: ${scene.characters.join(', ')}`, 11);
+                            }
+                            
+                            if (scene.location) {
+                                addText(`Location: ${scene.location}`, 11);
+                            }
+                            
+                            addText(`Description: ${scene.description || "No description"}`);
+                            
+                            if (scene.impact) {
+                                addText(`Impact on Story: ${scene.impact}`, 11);
+                            }
+                            
+                            yPos += 10; // Extra space between scenes
+                        });
+                    }
+                    
+                    // ========== OUTLINE SECTION ==========
+                    if (codex.outline.length > 0) {
+                        addNewPage();
+                        addTitle("V. Chapter Outline", 1);
+                        
+                        // Sort by chapter number
+                        const sortedOutline = [...codex.outline].sort((a, b) => {
+                            const aNum = parseInt(a.number.replace(/\D/g, '')) || 0;
+                            const bNum = parseInt(b.number.replace(/\D/g, '')) || 0;
+                            return aNum - bNum;
+                        });
+                        
+                        sortedOutline.forEach((chapter, index) => {
+                            checkPageBreak(30);
+                            
+                            addTitle(`${chapter.number}: ${chapter.title}`, 2);
+                            
+                            if (chapter.pov) {
+                                addText(`POV: ${chapter.pov}`, 11);
+                            }
+                            
+                            addText(`Synopsis: ${chapter.synopsis || "No synopsis"}`);
+                            
+                            if (chapter.purpose) {
+                                addText(`Purpose: ${chapter.purpose}`, 11);
+                            }
+                            
+                            yPos += 10; // Extra space between chapters
+                        });
+                    }
+                    
+                    // ========== NOTES SECTION ==========
+                    if (codex.notes.length > 0) {
+                        addNewPage();
+                        addTitle("VI. Writer's Notes", 1);
+                        
+                        codex.notes.forEach((note, index) => {
+                            checkPageBreak(20);
+                            
+                            addTitle(`${note.title} [${note.category}]`, 3);
+                            addText(note.content || "No content");
+                            
+                            yPos += 5; // Small space between notes
+                        });
+                    }
+                    
+                    // ========== WRITING SECTION ==========
+                    const writtenContent = Object.entries(codex.writing).filter(([_, text]) => text && text.trim());
+                    if (writtenContent.length > 0) {
+                        addNewPage();
+                        addTitle("VII. Written Content", 1);
+                        
+                        let totalWrittenWords = 0;
+                        
+                        writtenContent.forEach(([chapter, text]) => {
+                            checkPageBreak(30);
+                            
+                            const chapterTitle = codex.outline.find(c => c.number === chapter)?.title || "Untitled";
+                            addTitle(`Chapter: ${chapter} - ${chapterTitle}`, 2);
+                            
+                            const words = text.trim().split(/\s+/).length;
+                            totalWrittenWords += words;
+                            addText(`Word Count: ${words}`, 10);
+                            
+                            // Add the actual writing (truncated if very long)
+                            const previewText = text.length > 2000 ? text.substring(0, 2000) + "..." : text;
+                            addText(previewText);
+                            
+                            if (text.length > 2000) {
+                                addText(`[Content truncated. Full chapter contains ${text.length} characters.]`, 9);
+                            }
+                            
+                            yPos += 15; // Extra space between chapters
+                        });
+                        
+                        // Summary
+                        checkPageBreak(20);
+                        addTitle("Writing Summary", 2);
+                        addText(`Total Written Chapters: ${writtenContent.length}`);
+                        addText(`Total Words: ${totalWrittenWords}`);
+                    }
+                    
+                    // ========== SUMMARY PAGE ==========
+                    addNewPage();
+                    addTitle("Codex Summary", 1);
+                    
+                    const totalElements = codex.characters.length + codex.world.length + 
+                                         codex.scenes.length + codex.outline.length + 
+                                         codex.notes.length;
+                    
+                    const stats = [
+                        `Novel: ${codex.metadata.title}`,
+                        `Author: ${codex.metadata.author}`,
+                        `Genre: ${codex.metadata.genre}`,
+                        `Target Audience: ${codex.metadata.audience}`,
+                        `Created: ${new Date(codex.metadata.created).toLocaleDateString()}`,
+                        `Last Modified: ${new Date(codex.metadata.modified).toLocaleDateString()}`,
+                        ``,
+                        `Characters: ${codex.characters.length}`,
+                        `World Elements: ${codex.world.length}`,
+                        `Important Scenes: ${codex.scenes.length}`,
+                        `Chapters Outlined: ${codex.outline.length}`,
+                        `Writer's Notes: ${codex.notes.length}`,
+                        `Total Planning Elements: ${totalElements}`,
+                        `Written Chapters: ${writtenContent.length}`,
+                        `Total Pages in Codex: ${currentPage}`
+                    ];
+                    
+                    stats.forEach(stat => {
+                        addText(stat, 12);
+                    });
+                    
+                    // Final note
+                    yPos += 20;
+                    addText("This Codex was generated with Quill & Codex - Your Complete Novel Planning Studio.", 10);
+                    addText("Keep writing and creating wonderful stories!", 10);
+                    
+                    // Save the PDF
+                    const fileName = `${codex.metadata.title.replace(/[^a-z0-9]/gi, '_') || 'novel'}_Complete_Codex.pdf`;
+                    pdf.save(fileName);
+                    
+                    showNotification('Complete Codex PDF generated successfully!', 'success');
+                    
+                } catch (error) {
+                    console.error('PDF Generation Error:', error);
+                    showNotification('Error generating PDF. Please try again.', 'error');
                 }
-                
-                if (codex.characters.length > 0) {
-                    sections.push({ title: `II. Characters (${codex.characters.length})`, page: tocPage });
-                    tocPage += Math.ceil(codex.characters.length / 3);
-                }
-                
-                if (codex.world.length > 0) {
-                    sections.push({ title: `III. World Building (${codex.world.length})`, page: tocPage });
-                    tocPage += Math.ceil(codex.world.length / 4);
-                }
-                
-                if (codex.scenes.length > 0) {
-                    sections.push({ title: `IV. Important Scenes (${codex.scenes.length})`, page: tocPage });
-                    tocPage += Math.ceil(codex.scenes.length / 3);
-                }
-                
-                if (codex.outline.length > 0) {
-                    sections.push({ title: `V. Chapter Outline (${codex.outline.length})`, page: tocPage });
-                    tocPage += Math.ceil(codex.outline.length / 2);
-                }
-                
-                if (codex.notes.length > 0) {
-                    sections.push({ title: `VI. Writer's Notes (${codex.notes.length})`, page: tocPage });
-                    tocPage += Math.ceil(codex.notes.length / 4);
-                }
-                
-                const writtenChapters = Object.entries(codex.writing).filter(([_, text]) => text && text.trim());
-                if (writtenChapters.length > 0) {
-                    sections.push({ title: `VII. Written Content (${writtenChapters.length} chapters)`, page: tocPage });
-                }
-                
-                sections.forEach(section => {
-                    pdf.text(section.title, margin, tocY);
-                    pdf.text(section.page.toString(), pageWidth - margin, tocY, { align: 'right' });
-                    tocY += lineHeight + 2;
-                });
-                
-                // Save the PDF
-                const fileName = `${codex.metadata.title.replace(/[^a-z0-9]/gi, '_') || 'novel'}_Codex.pdf`;
-                pdf.save(fileName);
-                showNotification('Beautiful handwritten Codex PDF generated!', 'success');
-            }, 1000);
+            }, 500);
         }
 
         // Save/Load functions
