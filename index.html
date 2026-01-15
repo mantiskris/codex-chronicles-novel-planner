@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* ALL YOUR ORIGINAL CSS STAYS EXACTLY THE SAME */
         :root {
             --black: #000000;
             --white: #ffffff;
@@ -21,6 +20,8 @@
             --paper: #fefefe;
             --border: #d4d4d4;
             --shadow: rgba(0,0,0,0.1);
+            --partyrock-purple: #667eea;
+            --partyrock-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         * {
@@ -685,213 +686,6 @@
             margin: 10px 0;
         }
         
-        /* ===== NEW AI STYLES ===== */
-        .ai-image-section {
-            margin-top: 20px;
-            padding: 20px;
-            border: 2px dashed var(--border);
-            border-radius: 0;
-            background: var(--light-gray);
-        }
-        
-        .ai-image-title {
-            font-family: 'Homemade Apple', cursive;
-            font-size: 1.6rem;
-            color: var(--black);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .ai-prompt-box {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--border);
-            border-radius: 0;
-            font-family: 'Caveat', cursive;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            background: var(--white);
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .ai-style-select {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .style-option {
-            padding: 10px;
-            border: 2px solid var(--border);
-            border-radius: 0;
-            background: var(--white);
-            cursor: pointer;
-            text-align: center;
-            font-family: 'Shadows Into Light', cursive;
-            transition: all 0.3s ease;
-        }
-        
-        .style-option:hover {
-            border-color: var(--black);
-            background: var(--light-gray);
-        }
-        
-        .style-option.selected {
-            border-color: var(--black);
-            background: var(--black);
-            color: var(--white);
-        }
-        
-        .ai-generate-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 0;
-            padding: 15px 30px;
-            font-family: 'Shadows Into Light', cursive;
-            font-weight: 600;
-            font-size: 1.2rem;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .ai-generate-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .ai-generate-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .ai-loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .ai-loading-spinner {
-            border: 3px solid var(--light-gray);
-            border-top: 3px solid var(--black);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .ai-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .ai-result-image {
-            position: relative;
-            border: 1px solid var(--border);
-            padding: 10px;
-            background: var(--white);
-        }
-        
-        .ai-result-image img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .ai-image-actions {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        
-        .ai-save-btn, .ai-regenerate-btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 0;
-            font-family: 'Caveat', cursive;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .ai-save-btn {
-            background: var(--black);
-            color: var(--white);
-        }
-        
-        .ai-save-btn:hover {
-            background: var(--dark-gray);
-        }
-        
-        .ai-regenerate-btn {
-            background: var(--light-gray);
-            color: var(--black);
-            border: 1px solid var(--border);
-        }
-        
-        .ai-regenerate-btn:hover {
-            background: var(--medium-gray);
-        }
-        
-        .ai-api-key-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: var(--white);
-            border: 1px solid var(--border);
-        }
-        
-        .api-key-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 0;
-            font-family: 'Caveat', cursive;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-        
-        .api-info {
-            font-size: 0.9rem;
-            color: var(--dark-gray);
-            margin-top: 10px;
-            font-family: 'Nothing You Could Do', cursive;
-        }
-        
-        .api-info a {
-            color: var(--black);
-            text-decoration: underline;
-        }
-        
-        .image-source-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 2px 6px;
-            font-size: 0.8rem;
-            font-family: 'Shadows Into Light', cursive;
-        }
-        
         /* ===== PARTYROCK MODAL STYLES ===== */
         .modal-overlay {
             position: fixed;
@@ -899,12 +693,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
         }
         
         .modal-content {
@@ -921,7 +720,7 @@
         }
         
         .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--partyrock-gradient);
             color: white;
             padding: 20px 25px;
             border-radius: 6px 6px 0 0;
@@ -979,7 +778,7 @@
         
         .partyrock-iframe {
             width: 100%;
-            height: 500px;
+            height: 550px;
             border: none;
             display: block;
         }
@@ -997,6 +796,9 @@
             font-size: 1.5rem;
             margin-bottom: 15px;
             color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .instructions-list {
@@ -1014,7 +816,7 @@
         
         .instructions-list li:before {
             content: "•";
-            color: #667eea;
+            color: var(--partyrock-purple);
             font-size: 1.5rem;
             position: absolute;
             left: 0;
@@ -1054,7 +856,7 @@
         }
         
         .modal-note i {
-            color: #667eea;
+            color: var(--partyrock-purple);
         }
         
         /* Tooltip */
@@ -1099,9 +901,67 @@
         
         .progress-bar {
             height: 6px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--partyrock-gradient);
             width: 0%;
             transition: width 0.5s ease;
+        }
+        
+        /* PartyRock Button */
+        .partyrock-btn {
+            background: var(--partyrock-gradient);
+            color: white;
+            border: none;
+            border-radius: 0;
+            padding: 12px 25px;
+            font-family: 'Shadows Into Light', cursive;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .partyrock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .ai-image-section {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid var(--border);
+            border-radius: 0;
+            background: var(--light-gray);
+        }
+        
+        .ai-image-title {
+            font-family: 'Homemade Apple', cursive;
+            font-size: 1.6rem;
+            color: var(--black);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ai-tip {
+            background: #e3f2fd;
+            border-left: 4px solid var(--partyrock-purple);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .ai-tip p {
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            margin: 0;
         }
     </style>
 </head>
@@ -1252,23 +1112,23 @@
 Example: 28 years old, 6'2", athletic build, shoulder-length black hair with silver streaks, piercing blue eyes, scar across left cheek, wears practical leather armor, carries an ancient family heirloom sword."></textarea>
                         </div>
                         
-                        <!-- AI IMAGE GENERATION SECTION -->
+                        <!-- PARTYROCK AI IMAGE GENERATION SECTION -->
                         <div class="ai-image-section">
                             <h3 class="ai-image-title">
-                                <i class="fas fa-robot"></i> Character Image Generator
+                                <i class="fas fa-magic"></i> AI Character Image Generator
                             </h3>
                             
-                            <p style="margin-bottom: 15px; font-family: 'Caveat', cursive; font-size: 1.2rem;">
-                                Generate character images using AI:
-                            </p>
+                            <div class="ai-tip">
+                                <p><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Use PartyRock AI to generate character images based on your description above!</p>
+                            </div>
                             
                             <!-- PartyRock Integration Button -->
-                            <button class="ai-generate-btn" onclick="openPartyRockModal()" style="margin-bottom: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <i class="fas fa-external-link-alt"></i> Generate with PartyRock AI
+                            <button class="partyrock-btn" onclick="openPartyRockModal()">
+                                <i class="fas fa-external-link-alt"></i> Open PartyRock AI Generator
                             </button>
                             
                             <p style="text-align: center; margin: 15px 0; font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--dark-gray);">
-                                <i class="fas fa-info-circle"></i> Click above to open the AI image generator
+                                <i class="fas fa-info-circle"></i> Generate images in the AI tool, then upload them below
                             </p>
                             
                             <!-- Character Images Display Area -->
@@ -1276,10 +1136,10 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                                 <label>Character Images:</label>
                                 <div class="image-upload-area" onclick="document.getElementById('charImageUpload').click()">
                                     <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>Upload character reference images</p>
-                                    <p style="font-size: 0.9rem; color: var(--dark-gray);">(Drag & drop or click to browse)</p>
-                                    <p style="font-size: 0.9rem; color: #667eea; margin-top: 10px;">
-                                        <i class="fas fa-lightbulb"></i> Tip: Generate images with PartyRock above, then upload them here!
+                                    <p>Drag & drop or click to upload character images</p>
+                                    <p style="font-size: 0.9rem; color: var(--dark-gray);">(Supports JPG, PNG, GIF, WebP)</p>
+                                    <p style="font-size: 0.9rem; color: var(--partyrock-purple); margin-top: 10px;">
+                                        <i class="fas fa-robot"></i> Save images from PartyRock AI, then upload them here!
                                     </p>
                                 </div>
                                 <input type="file" id="charImageUpload" accept="image/*" multiple style="display: none;" onchange="handleCharImageUpload(event)">
@@ -1591,7 +1451,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
     <input type="file" id="jsonImport" accept=".json" style="display: none;">
 
     <!-- PARTYROCK MODAL -->
-    <div id="partyRockModal" class="modal-overlay" style="display: none;">
+    <div id="partyRockModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fas fa-magic"></i> PartyRock AI Image Generator</h3>
@@ -1601,16 +1461,18 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                 <!-- PartyRock Embed -->
                 <div class="partyrock-embed-container">
                     <iframe 
-                        src="https://partyrock.aws/u/KJAM924/Srwr7zOCO/Quill-and-Codex%253A-Character-Canvas" 
+                        src="https://partyrock.aws/u/KJAM924/Srwr7zOCO/Quill-and-Codex:-Character-Canvas" 
                         class="partyrock-iframe"
                         title="PartyRock AI Character Generator"
-                        id="partyRockIframe">
+                        id="partyRockIframe"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
                     </iframe>
                 </div>
                 
                 <!-- Instructions -->
                 <div class="instructions-panel">
-                    <h4><i class="fas fa-graduation-cap"></i> How to Use:</h4>
+                    <h4><i class="fas fa-graduation-cap"></i> How to Use PartyRock AI:</h4>
                     <ul class="instructions-list">
                         <li>1. Describe your character in the PartyRock tool above</li>
                         <li>2. Click "Generate" to create character images</li>
@@ -1618,7 +1480,8 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                         <li>4. Close this window (click the X or "Done" button below)</li>
                         <li>5. Upload your saved image in the character creation form</li>
                     </ul>
-                    <div style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+                    
+                    <div style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid var(--partyrock-purple); border-radius: 4px;">
                         <p style="font-family: 'Caveat', cursive; font-size: 1.3rem; margin: 0;">
                             <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> You can also drag & drop saved images directly onto the upload area!
                         </p>
@@ -1626,13 +1489,14 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                 </div>
                 
                 <!-- Auto-fill Character Description -->
-                <div style="margin-top: 20px; padding: 15px; background: var(--light-gray); border-radius: 8px; display: none;" id="autoFillSection">
-                    <h4 style="font-family: 'Homemade Apple', cursive; margin-bottom: 10px;">Auto-fill PartyRock Description</h4>
+                <div style="margin-top: 20px; padding: 15px; background: var(--light-gray); border-radius: 8px;" id="autoFillSection">
+                    <h4 style="font-family: 'Homemade Apple', cursive; margin-bottom: 10px;">Quick Setup:</h4>
                     <p style="font-family: 'Caveat', cursive; font-size: 1.2rem; margin-bottom: 10px;">
-                        Click below to copy your character description to the clipboard, then paste it into PartyRock:
+                        Use your character description from the form:
                     </p>
-                    <button class="btn" onclick="copyDescriptionToClipboard()" style="background: #4CAF50; color: white;">
-                        <i class="fas fa-copy"></i> Copy Character Description
+                    <div style="background: var(--white); padding: 15px; border: 1px solid var(--border); margin-bottom: 15px; font-family: 'Caveat', cursive; font-size: 1.1rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto;" id="autoFillContent"></div>
+                    <button class="btn" onclick="copyDescriptionToClipboard()" style="background: var(--partyrock-purple); color: white; width: 100%;">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
                     </button>
                 </div>
             </div>
@@ -1679,36 +1543,48 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
 
         let worldImages = [];
         let characterImages = [];
+        let currentCharacterImages = [];
         
         // =====================
-        // PARTYROCK MODAL FUNCTIONS
+        // PARTYROCK INTEGRATION FUNCTIONS
         // =====================
         
         function openPartyRockModal() {
             const modal = document.getElementById('partyRockModal');
-            modal.style.display = 'flex';
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            // Check if character description exists and show auto-fill section
+            // Update the auto-fill content with current character description
             const charDescription = document.getElementById('charAppearance').value;
+            const autoFillContent = document.getElementById('autoFillContent');
             const autoFillSection = document.getElementById('autoFillSection');
+            
             if (charDescription.trim()) {
+                autoFillContent.textContent = charDescription;
                 autoFillSection.style.display = 'block';
             } else {
                 autoFillSection.style.display = 'none';
             }
+            
+            // Focus the iframe
+            setTimeout(() => {
+                const iframe = document.getElementById('partyRockIframe');
+                if (iframe) {
+                    iframe.focus();
+                }
+            }, 100);
             
             showNotification('PartyRock AI Generator opened! Describe your character and generate images.', 'info');
         }
         
         function closePartyRockModal() {
             const modal = document.getElementById('partyRockModal');
-            modal.style.display = 'none';
+            modal.classList.remove('active');
             document.body.style.overflow = 'auto';
             
             // Show reminder about uploading images
             setTimeout(() => {
-                showNotification('Remember to upload your generated images in the character form!', 'info');
+                showNotification('Remember to upload your generated character images in the form!', 'info');
             }, 500);
         }
         
@@ -1721,12 +1597,33 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                     })
                     .catch(err => {
                         console.error('Failed to copy: ', err);
-                        showNotification('Could not copy to clipboard. Please copy manually.', 'error');
+                        // Fallback method
+                        const textArea = document.createElement('textarea');
+                        textArea.value = charDescription;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        showNotification('Description copied! Paste it into PartyRock.', 'success');
                     });
             } else {
                 showNotification('Please enter a character description first', 'warning');
             }
         }
+        
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closePartyRockModal();
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('partyRockModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closePartyRockModal();
+            }
+        });
         
         // =====================
         // CHARACTER IMAGE HANDLING
@@ -1734,34 +1631,31 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
         
         function handleCharImageUpload(event) {
             const files = event.target.files;
-            const charId = Date.now();
-            
-            // Initialize characterImages if not exists
-            if (!characterImages) {
-                characterImages = [];
-            }
+            const preview = document.getElementById('charImagePreview');
             
             for (let file of files) {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const imageData = e.target.result;
-                        characterImages.push({
+                        currentCharacterImages.push({
                             id: Date.now(),
-                            characterId: charId,
                             data: imageData,
                             name: file.name,
-                            source: 'upload'
+                            size: file.size,
+                            type: file.type
                         });
                         
                         // Update preview
-                        const preview = document.getElementById('charImagePreview');
                         if (preview) {
+                            const imageIndex = currentCharacterImages.length - 1;
                             preview.innerHTML += `
-                                <div class="image-preview">
-                                    <button class="remove-image" onclick="removeCharacterImage(${characterImages.length - 1})">×</button>
+                                <div class="image-preview" id="char-image-${imageIndex}">
+                                    <button class="remove-image" onclick="removeCharacterImage(${imageIndex})">×</button>
                                     <img src="${imageData}" alt="${file.name}">
-                                    <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
+                                    <div style="font-size: 0.8rem; margin-top: 5px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        ${file.name}
+                                    </div>
                                 </div>
                             `;
                         }
@@ -1772,26 +1666,32 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
         }
         
         function removeCharacterImage(index) {
-            if (characterImages && characterImages[index]) {
-                characterImages.splice(index, 1);
-                const preview = document.getElementById('charImagePreview');
-                if (preview) {
-                    preview.innerHTML = '';
-                    characterImages.forEach((img, idx) => {
-                        preview.innerHTML += `
-                            <div class="image-preview">
-                                <button class="remove-image" onclick="removeCharacterImage(${idx})">×</button>
-                                <img src="${img.data}" alt="${img.name}">
-                                <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
+            if (currentCharacterImages && currentCharacterImages[index]) {
+                currentCharacterImages.splice(index, 1);
+                updateCharImagePreview();
+            }
+        }
+        
+        function updateCharImagePreview() {
+            const preview = document.getElementById('charImagePreview');
+            if (preview && currentCharacterImages) {
+                preview.innerHTML = '';
+                currentCharacterImages.forEach((img, idx) => {
+                    preview.innerHTML += `
+                        <div class="image-preview" id="char-image-${idx}">
+                            <button class="remove-image" onclick="removeCharacterImage(${idx})">×</button>
+                            <img src="${img.data}" alt="${img.name}">
+                            <div style="font-size: 0.8rem; margin-top: 5px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${img.name}
                             </div>
-                        `;
-                    });
-                }
+                        </div>
+                    `;
+                });
             }
         }
         
         // =====================
-        // ORIGINAL APP FUNCTIONS (Updated)
+        // ORIGINAL APP FUNCTIONS
         // =====================
         
         // DOM elements
@@ -1820,6 +1720,9 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                     this.value = '';
                 }
             });
+            
+            // Initialize currentCharacterImages
+            currentCharacterImages = [];
         });
 
         // Setup tabs
@@ -1849,6 +1752,10 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                         updateTimelineView();
                     } else if (tabId === 'writing') {
                         updateChapterSelect();
+                    } else if (tabId === 'characters') {
+                        // Reset current character images when entering character tab
+                        currentCharacterImages = [];
+                        updateCharImagePreview();
                     }
                 });
             });
@@ -1919,6 +1826,15 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
             document.getElementById('writingChapter').addEventListener('change', function() {
                 loadChapterForWriting();
             });
+            
+            // Character appearance auto-fill for PartyRock
+            document.getElementById('charAppearance').addEventListener('input', function() {
+                // Update the auto-fill content in real-time
+                const autoFillContent = document.getElementById('autoFillContent');
+                if (autoFillContent && this.value.trim()) {
+                    autoFillContent.textContent = this.value;
+                }
+            });
         }
 
         // Premise functions
@@ -1941,12 +1857,6 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                 tags: document.getElementById('worldTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
             };
             
-            // Add images if any
-            const uploadedImages = worldImages.filter(img => img.elementId === worldId);
-            if (uploadedImages.length > 0) {
-                worldElement.images = uploadedImages;
-            }
-            
             codex.world.push(worldElement);
             updateWorldTab();
             
@@ -1962,7 +1872,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
 
         function handleWorldImageUpload(event) {
             const files = event.target.files;
-            const worldId = Date.now();
+            const preview = document.getElementById('worldImagePreview');
             
             for (let file of files) {
                 if (file.type.startsWith('image/')) {
@@ -1971,39 +1881,23 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                         const imageData = e.target.result;
                         worldImages.push({
                             id: Date.now(),
-                            elementId: worldId,
                             data: imageData,
                             name: file.name
                         });
                         
                         // Update preview
-                        const preview = document.getElementById('worldImagePreview');
-                        preview.innerHTML += `
-                            <div class="image-preview">
-                                <button class="remove-image" onclick="removeWorldImage(${worldImages.length - 1})">×</button>
-                                <img src="${imageData}" alt="${file.name}">
-                                <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
-                            </div>
-                        `;
+                        if (preview) {
+                            preview.innerHTML += `
+                                <div class="image-preview">
+                                    <img src="${imageData}" alt="${file.name}">
+                                    <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${file.name}</div>
+                                </div>
+                            `;
+                        }
                     };
                     reader.readAsDataURL(file);
                 }
             }
-        }
-
-        function removeWorldImage(index) {
-            worldImages.splice(index, 1);
-            const preview = document.getElementById('worldImagePreview');
-            preview.innerHTML = '';
-            worldImages.forEach((img, idx) => {
-                preview.innerHTML += `
-                    <div class="image-preview">
-                        <button class="remove-image" onclick="removeWorldImage(${idx})">×</button>
-                        <img src="${img.data}" alt="${img.name}">
-                        <div style="font-size: 0.8rem; margin-top: 5px; text-align: center;">${img.name}</div>
-                    </div>
-                `;
-            });
         }
 
         function updateWorldTab() {
@@ -2028,17 +1922,6 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                             <label>Tags:</label>
                             <div class="tag-container">
                                 ${world.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                            </div>
-                        </div>` : ''}
-                        ${world.images && world.images.length > 0 ? `
-                        <div class="form-group">
-                            <label>Inspiration Images:</label>
-                            <div class="image-preview-container">
-                                ${world.images.map(img => `
-                                    <div class="image-preview">
-                                        <img src="${img.data}" alt="${img.name}">
-                                    </div>
-                                `).join('')}
                             </div>
                         </div>` : ''}
                     </div>
@@ -2068,19 +1951,10 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                 tags: document.getElementById('charTags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
             };
             
-            // Update characterId in character images
-            if (characterImages) {
-                characterImages.forEach(img => {
-                    if (!img.characterId || img.characterId === charId) {
-                        img.characterId = charId;
-                    }
-                });
-                
-                // Add all images (uploaded + AI generated)
-                const charImages = characterImages.filter(img => img.characterId === charId);
-                if (charImages.length > 0) {
-                    character.images = charImages;
-                }
+            // Add current character images
+            if (currentCharacterImages.length > 0) {
+                character.images = [...currentCharacterImages];
+                characterImages.push(...currentCharacterImages);
             }
             
             codex.characters.push(character);
@@ -2094,6 +1968,9 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
             document.getElementById('charArc').value = '';
             document.getElementById('charTags').value = '';
             document.getElementById('charImagePreview').innerHTML = '';
+            
+            // Reset current images
+            currentCharacterImages = [];
             
             showNotification('Character created!', 'success');
             updateStats();
@@ -2126,7 +2003,9 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                                     ${char.images.map(img => `
                                         <div class="image-preview">
                                             <img src="${img.data}" alt="${img.name}">
-                                            ${img.source === 'partyrock' ? '<div style="font-size: 0.7rem; text-align: center; background: #667eea; color: white; padding: 2px;">PartyRock AI</div>' : ''}
+                                            <div style="font-size: 0.7rem; text-align: center; background: var(--partyrock-purple); color: white; padding: 2px;">
+                                                Character Image
+                                            </div>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -2634,7 +2513,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
             previewHTML += `
                 <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--border);">
                     <p><strong>Total Planning Elements:</strong> ${codex.characters.length + codex.world.length + codex.scenes.length + codex.outline.length + codex.notes.length}</p>
-                    <p><strong>AI Features:</strong> Integrated PartyRock AI image generation</p>
+                    <p><strong>AI Features:</strong> Integrated PartyRock AI image generation for character visualization</p>
                     <p><em>Click "Generate Aesthetic Codex" to export everything in a beautiful handwritten-style PDF.</em></p>
                 </div>
             </div>`;
@@ -2885,6 +2764,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                 
                 worldImages = [];
                 characterImages = [];
+                currentCharacterImages = [];
                 
                 // Clear all form fields
                 document.getElementById('novelTitle').value = 'Untitled Manuscript';
