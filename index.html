@@ -6,7 +6,7 @@
     <title>Quill & Codex | Complete Novel Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Homemade+Apple&family=Nothing+You+Could+Do&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Homemade+Apple&family=Nothing+You+Could+Do&family=Shadows+Into+Light&family=Space+Mono:wght@400;700&family=Courier+Prime:wght@400;700&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -22,6 +22,8 @@
             --shadow: rgba(0,0,0,0.1);
             --partyrock-purple: #667eea;
             --partyrock-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --typewriter-bg: #f8f8f8;
+            --typewriter-border: #ccc;
         }
         
         * {
@@ -31,14 +33,14 @@
         }
         
         body {
-            font-family: 'Caveat', cursive;
+            font-family: 'Courier Prime', 'Source Code Pro', monospace;
             background-color: var(--paper);
             color: var(--ink-gray);
             line-height: 1.6;
             min-height: 100vh;
             background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.1) 28px, rgba(0,0,0,0.1) 29px);
-            letter-spacing: 0.5px;
+                repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.05) 28px, rgba(0,0,0,0.05) 29px);
+            letter-spacing: 0.3px;
         }
         
         .container {
@@ -48,7 +50,7 @@
             min-height: 100vh;
         }
         
-        /* Header */
+        /* Header - HANDWRITTEN STYLE */
         .header {
             text-align: center;
             padding: 40px 20px 20px;
@@ -82,7 +84,7 @@
             opacity: 0.3;
         }
         
-        /* Main Content */
+        /* Main Content - TYPEWRITER STYLE */
         .main-content {
             background: var(--white);
             border-radius: 4px;
@@ -91,6 +93,7 @@
             border: 1px solid var(--border);
             min-height: 700px;
             position: relative;
+            font-family: 'Courier Prime', monospace;
         }
         
         .content-header {
@@ -102,6 +105,7 @@
             border-bottom: 1px solid var(--border);
         }
         
+        /* Section Title - HANDWRITTEN STYLE */
         .section-title {
             font-family: 'Homemade Apple', cursive;
             font-size: 2.2rem;
@@ -110,16 +114,17 @@
         }
         
         .page-number {
-            font-family: 'Caveat', cursive;
+            font-family: 'Courier Prime', monospace;
             color: var(--dark-gray);
-            font-size: 1.4rem;
-            padding: 5px 15px;
+            font-size: 1.2rem;
+            padding: 8px 15px;
             border-radius: 0;
             border: 1px solid var(--border);
             background: var(--white);
+            letter-spacing: 1px;
         }
         
-        /* Tabs */
+        /* Tabs - HANDWRITTEN STYLE */
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -162,6 +167,7 @@
             display: none;
             min-height: 500px;
             animation: fadeIn 0.3s ease;
+            font-family: 'Courier Prime', monospace;
         }
         
         @keyframes fadeIn {
@@ -173,30 +179,32 @@
             display: block;
         }
         
-        /* Writing Area */
+        /* Writing Area - TYPEWRITER STYLE */
         .writing-area {
             width: 100%;
             height: 550px;
             padding: 30px;
             border: 1px solid var(--border);
             border-radius: 0;
-            font-family: 'Caveat', cursive;
-            font-size: 1.4rem;
-            line-height: 2;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
             color: var(--ink-gray);
-            background: var(--white);
+            background: var(--typewriter-bg);
             resize: none;
             outline: none;
             box-shadow: inset 0 1px 3px var(--shadow);
+            letter-spacing: 0.5px;
         }
         
         .writing-area::placeholder {
             color: var(--medium-gray);
             opacity: 0.8;
             font-style: italic;
+            font-family: 'Courier Prime', monospace;
         }
         
-        /* Tool Cards */
+        /* Tool Cards - TYPEWRITER STYLE */
         .tool-card {
             background: var(--white);
             border: 1px solid var(--border);
@@ -206,6 +214,7 @@
             position: relative;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px var(--shadow);
+            font-family: 'Courier Prime', monospace;
         }
         
         .tool-card:hover {
@@ -227,7 +236,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            font-family: 'Caveat', cursive;
+            font-family: 'Courier Prime', monospace;
         }
         
         .delete-btn:hover {
@@ -235,6 +244,7 @@
             color: var(--white);
         }
         
+        /* Tool Card Title - HANDWRITTEN STYLE */
         .tool-card-title {
             font-family: 'Homemade Apple', cursive;
             font-size: 1.8rem;
@@ -249,44 +259,53 @@
             margin-bottom: 20px;
         }
         
+        /* Form Labels - TYPEWRITER STYLE */
         .form-group label {
             display: block;
             margin-bottom: 8px;
             color: var(--dark-gray);
             font-weight: 600;
-            font-size: 1.2rem;
-            font-family: 'Shadows Into Light', cursive;
+            font-size: 1.1rem;
+            font-family: 'Courier Prime', monospace;
+            letter-spacing: 0.5px;
         }
         
+        /* Form Inputs - TYPEWRITER STYLE */
         .form-input {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid var(--border);
             border-radius: 0;
-            font-family: 'Caveat', cursive;
-            font-size: 1.2rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
             color: var(--ink-gray);
             background: var(--white);
             transition: all 0.3s ease;
+            letter-spacing: 0.5px;
         }
         
         .form-input:focus {
             outline: none;
             border-color: var(--black);
             box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+            background: var(--typewriter-bg);
         }
         
         .form-textarea {
             min-height: 120px;
             resize: vertical;
+            font-family: 'Courier Prime', monospace;
+            line-height: 1.6;
         }
         
         .form-textarea-large {
             min-height: 200px;
             resize: vertical;
+            font-family: 'Courier Prime', monospace;
+            line-height: 1.6;
         }
         
-        /* Image Upload Area */
+        /* Image Upload Area - TYPEWRITER STYLE */
         .image-upload-area {
             border: 2px dashed var(--border);
             border-radius: 0;
@@ -296,6 +315,7 @@
             margin: 20px 0;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-family: 'Courier Prime', monospace;
         }
         
         .image-upload-area:hover {
@@ -341,21 +361,22 @@
             height: 25px;
             cursor: pointer;
             font-size: 0.9rem;
+            font-family: 'Courier Prime', monospace;
         }
         
-        /* Buttons */
+        /* Buttons - TYPEWRITER STYLE */
         .btn {
             background: var(--white);
             color: var(--black);
             border: 2px solid var(--black);
             border-radius: 0;
             padding: 12px 25px;
-            font-family: 'Shadows Into Light', cursive;
+            font-family: 'Courier Prime', monospace;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 10px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             letter-spacing: 1px;
             display: inline-flex;
             align-items: center;
@@ -395,8 +416,10 @@
             border: 1px solid var(--border);
             padding: 20px;
             background: var(--white);
+            font-family: 'Courier Prime', monospace;
         }
         
+        /* Connection Title - HANDWRITTEN STYLE */
         .connection-title {
             font-family: 'Homemade Apple', cursive;
             font-size: 1.5rem;
@@ -406,7 +429,7 @@
             padding-bottom: 8px;
         }
         
-        /* Control Panel */
+        /* Control Panel - TYPEWRITER STYLE */
         .control-panel {
             background: var(--white);
             border-radius: 0;
@@ -414,6 +437,16 @@
             box-shadow: 0 2px 10px var(--shadow);
             border: 1px solid var(--border);
             height: fit-content;
+            font-family: 'Courier Prime', monospace;
+        }
+        
+        /* Control Panel Headers - HANDWRITTEN STYLE */
+        .control-panel h3 {
+            font-family: 'Homemade Apple', cursive;
+            font-size: 1.8rem;
+            color: var(--black);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
         }
         
         .control-btn {
@@ -425,12 +458,12 @@
             color: var(--black);
             border: 2px solid var(--black);
             border-radius: 0;
-            font-family: 'Shadows Into Light', cursive;
+            font-family: 'Courier Prime', monospace;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 1px;
         }
         
@@ -440,15 +473,17 @@
             transform: translateY(-2px);
         }
         
-        /* Stats */
+        /* Stats - TYPEWRITER STYLE */
         .stats-box {
             background: var(--white);
             border-radius: 0;
             padding: 25px;
             margin-top: 30px;
             border: 2px solid var(--black);
+            font-family: 'Courier Prime', monospace;
         }
         
+        /* Stats Title - HANDWRITTEN STYLE */
         .stats-title {
             font-family: 'Homemade Apple', cursive;
             font-size: 1.6rem;
@@ -463,7 +498,8 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid var(--border);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-family: 'Courier Prime', monospace;
         }
         
         .stat-item:last-child {
@@ -473,9 +509,10 @@
         .stat-value {
             font-weight: 600;
             color: var(--black);
+            font-family: 'Courier Prime', monospace;
         }
         
-        /* Footer */
+        /* Footer - HANDWRITTEN STYLE */
         .footer {
             text-align: center;
             padding: 30px 20px;
@@ -493,7 +530,7 @@
             gap: 30px;
         }
         
-        /* Notification */
+        /* Notification - TYPEWRITER STYLE */
         .notification {
             position: fixed;
             top: 20px;
@@ -507,8 +544,8 @@
             z-index: 1000;
             animation: slideIn 0.3s ease;
             border: 2px solid var(--black);
-            font-family: 'Caveat', cursive;
-            font-size: 1.2rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
         }
         
         @keyframes slideIn {
@@ -522,14 +559,15 @@
             }
         }
         
-        /* Word Count */
+        /* Word Count - TYPEWRITER STYLE */
         .word-count {
             position: absolute;
             bottom: 10px;
             right: 10px;
             color: var(--dark-gray);
-            font-family: 'Nothing You Could Do', cursive;
-            font-size: 1rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
         }
         
         /* Responsive */
@@ -556,7 +594,7 @@
             
             .writing-area {
                 height: 400px;
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
             
             .main-content {
@@ -601,7 +639,7 @@
             background: radial-gradient(circle, var(--black) 0%, transparent 70%);
         }
         
-        /* Tag Input */
+        /* Tag Input - TYPEWRITER STYLE */
         .tag-container {
             display: flex;
             flex-wrap: wrap;
@@ -617,14 +655,16 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            font-family: 'Courier Prime', monospace;
         }
         
         .tag-remove {
             cursor: pointer;
             color: var(--dark-gray);
+            font-family: 'Courier Prime', monospace;
         }
         
-        /* Timeline Visual */
+        /* Timeline Visual - TYPEWRITER STYLE */
         .timeline-visual {
             margin-top: 20px;
             padding: 20px;
@@ -632,6 +672,7 @@
             background: var(--white);
             min-height: 300px;
             position: relative;
+            font-family: 'Courier Prime', monospace;
         }
         
         .timeline-event {
@@ -654,21 +695,24 @@
             padding: 10px;
             border: 1px solid var(--border);
             background: var(--light-gray);
+            font-family: 'Courier Prime', monospace;
         }
         
-        /* Outline Cards */
+        /* Outline Cards - TYPEWRITER STYLE */
         .outline-card {
             background: var(--white);
             border: 1px solid var(--border);
             padding: 20px;
             margin-bottom: 15px;
             cursor: move;
+            font-family: 'Courier Prime', monospace;
         }
         
         .outline-card:hover {
             border-color: var(--black);
         }
         
+        /* Outline Number - HANDWRITTEN STYLE */
         .outline-number {
             font-family: 'Homemade Apple', cursive;
             font-size: 1.4rem;
@@ -684,8 +728,10 @@
             padding: 25px;
             margin: 20px 0;
             text-align: center;
+            font-family: 'Courier Prime', monospace;
         }
         
+        /* PartyRock Title - HANDWRITTEN STYLE */
         .partyrock-title {
             font-family: 'Homemade Apple', cursive;
             font-size: 1.8rem;
@@ -703,9 +749,9 @@
             border: none;
             border-radius: 8px;
             padding: 15px 30px;
-            font-family: 'Shadows Into Light', cursive;
+            font-family: 'Courier Prime', monospace;
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
@@ -727,8 +773,10 @@
             padding: 20px;
             margin: 20px 0;
             text-align: left;
+            font-family: 'Courier Prime', monospace;
         }
         
+        /* Instructions Header - HANDWRITTEN STYLE */
         .instructions-box h4 {
             font-family: 'Homemade Apple', cursive;
             font-size: 1.4rem;
@@ -745,8 +793,8 @@
             margin-bottom: 10px;
             padding-left: 25px;
             position: relative;
-            font-family: 'Caveat', cursive;
-            font-size: 1.2rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
         }
         
         .instructions-list li:before {
@@ -764,12 +812,59 @@
             padding: 15px;
             margin: 15px 0;
             border-radius: 4px;
+            font-family: 'Courier Prime', monospace;
         }
         
         .tip-box p {
-            font-family: 'Caveat', cursive;
-            font-size: 1.2rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
             margin: 0;
+        }
+        
+        /* Quick Jump - TYPEWRITER STYLE */
+        #quickJump {
+            font-family: 'Courier Prime', monospace;
+        }
+        
+        /* Typewriter Text Selection */
+        ::selection {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Typewriter Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--dark-gray);
+            border-radius: 0;
+        }
+        
+        /* Codex Preview - TYPEWRITER STYLE */
+        #previewContainer {
+            font-family: 'Courier Prime', monospace;
+            line-height: 1.6;
+        }
+        
+        #previewContainer h1, 
+        #previewContainer h2, 
+        #previewContainer h3, 
+        #previewContainer h4 {
+            font-family: 'Homemade Apple', cursive;
+        }
+        
+        /* Character Display - Mixed Styles */
+        #charactersContainer .tool-card h3 {
+            font-family: 'Homemade Apple', cursive; /* Character names */
+        }
+        
+        #charactersContainer .tool-card p {
+            font-family: 'Courier Prime', monospace; /* Character details */
         }
     </style>
 </head>
@@ -1160,7 +1255,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
             <!-- Controls Sidebar -->
             <aside class="control-panel">
                 <div style="margin-bottom: 30px;">
-                    <h3 style="font-family: 'Homemade Apple', cursive; font-size: 1.8rem; color: var(--black); margin-bottom: 15px; letter-spacing: 1px;">Manuscript Info</h3>
+                    <h3>Manuscript Info</h3>
                     <div class="form-group">
                         <label for="novelTitle">Novel Title:</label>
                         <input type="text" id="novelTitle" class="form-input" placeholder="Your Novel Title">
@@ -1179,7 +1274,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                     </div>
                 </div>
                 
-                <h3 style="font-family: 'Homemade Apple', cursive; font-size: 1.8rem; color: var(--black); margin-bottom: 15px; letter-spacing: 1px;">Codex Controls</h3>
+                <h3>Codex Controls</h3>
                 
                 <button class="control-btn" onclick="saveEverything()">
                     <i class="fas fa-save"></i> Save Everything
@@ -1232,7 +1327,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                 
                 <!-- Quick Navigation -->
                 <div style="margin-top: 30px; border-top: 2px solid var(--border); padding-top: 20px;">
-                    <h3 style="font-family: 'Homemade Apple', cursive; font-size: 1.6rem; color: var(--black); margin-bottom: 15px; letter-spacing: 1px;">Quick Jump</h3>
+                    <h3>Quick Jump</h3>
                     <select class="form-input" id="quickJump" style="margin-bottom: 15px;">
                         <option value="">Jump to Tab...</option>
                         <option value="premise">Premise</option>
@@ -1265,6 +1360,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
     <!-- Hidden file input for JSON import -->
     <input type="file" id="jsonImport" accept=".json" style="display: none;">
 
+    <!-- JavaScript remains exactly the same as before -->
     <script>
         // =====================
         // STATE MANAGEMENT
@@ -1992,7 +2088,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                         <button class="delete-btn" onclick="deleteNote(${note.id})">×</button>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <h3 class="tool-card-title">${note.title}</h3>
-                            <span style="background: var(--black); color: white; padding: 2px 8px; border-radius: 0; font-size: 0.9rem; font-family: 'Shadows Into Light', cursive;">
+                            <span style="background: var(--black); color: white; padding: 2px 8px; border-radius: 0; font-size: 0.9rem; font-family: 'Courier Prime', monospace;">
                                 ${note.category}
                             </span>
                         </div>
@@ -2089,7 +2185,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
             const container = document.getElementById('previewContainer');
             
             let previewHTML = `
-                <div style="padding: 30px; background: var(--white); border: 2px solid var(--black); font-family: 'Caveat', cursive; font-size: 1.2rem; line-height: 1.8;">
+                <div style="padding: 30px; background: var(--white); border: 2px solid var(--black); font-family: 'Courier Prime', monospace; font-size: 1rem; line-height: 1.8;">
                     <h1 style="text-align: center; font-family: 'Homemade Apple', cursive; font-size: 2.5rem; margin-bottom: 20px; letter-spacing: 2px;">
                         ${codex.metadata.title || 'Untitled Manuscript'}
                     </h1>
@@ -2212,7 +2308,7 @@ Example: 28 years old, 6'2", athletic build, shoulder-length black hair with sil
                         ${Object.entries(codex.writing).filter(([_, text]) => text && text.trim()).map(([chapter, text]) => `
                             <div style="margin-bottom: 20px; padding: 15px; border: 1px solid var(--border);">
                                 <h3 style="font-family: 'Homemade Apple', cursive; font-size: 1.5rem; margin-bottom: 10px;">Chapter: ${chapter}</h3>
-                                <div style="white-space: pre-wrap; font-family: 'Caveat', cursive;">${text.substring(0, 300)}${text.length > 300 ? '... (continued in full PDF)' : ''}</div>
+                                <div style="white-space: pre-wrap; font-family: 'Courier Prime', monospace;">${text.substring(0, 300)}${text.length > 300 ? '... (continued in full PDF)' : ''}</div>
                             </div>
                         `).join('')}
                     </div>
